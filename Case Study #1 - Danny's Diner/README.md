@@ -15,20 +15,22 @@ He plans on using these insights to help him decide whether he should expand the
 Danny has provided you with a sample of his overall customer data due to privacy issues - but he hopes that these examples are enough for you to write fully functioning SQL queries to help him answer his questions!
 
 Danny has shared with you 3 key datasets for this case study:
-* sales
-* menu
-* members
+* `sales`
+* `menu`
+* `members`
   
 You can inspect the entity relationship diagram and example data below.
+
+## 📔 Entity Relationship Diagram
   
 <p align="center">
 <img src="https://user-images.githubusercontent.com/106714718/229250296-339b68e7-0125-470c-b596-0a4c66cd97ff.png" align="center" width="600" height="400" >
   
 ## 💾 Example Datasets
-All datasets exist within the dannys_diner database schema - be sure to include this reference within your SQL scripts as you start exploring the data and answering the case study questions.
+All datasets exist within the `dannys_diner` database schema - be sure to include this reference within your SQL scripts as you start exploring the data and answering the case study questions.
 
 ### Table 1: sales
-The sales table captures all customer_id level purchases with an corresponding order_date and product_id information for when and what menu items were ordered.
+The `sales` table captures all `customer_id` level purchases with an corresponding `order_date` and `product_id` information for when and what menu items were ordered.
   
 | customer_id | order_date | product_id |
 |-------------|------------|------------|
@@ -49,7 +51,7 @@ The sales table captures all customer_id level purchases with an corresponding o
 | C           | 2021-01-07 | 3          |
   
 ### Table 2: menu
-The menu table maps the product_id to the actual product_name and price of each menu item.
+The `menu` table maps the `product_id` to the actual `product_name` and `price` of each menu item.
   
 | product_id | product_name | price |
 |------------|--------------|-------|
@@ -58,7 +60,7 @@ The menu table maps the product_id to the actual product_name and price of each 
 | 3          | ramen        | 12    |
 
 ### Table 3: members
-The final members table captures the join_date when a customer_id joined the beta version of the Danny’s Diner loyalty program.
+The final `members` table captures the `join_date` when a `customer_id` joined the beta version of the Danny’s Diner loyalty program.
   
 | customer_id | join_date  |
 |-------------|------------|
@@ -78,3 +80,14 @@ Each of the following case study questions can be answered using a single SQL st
 8. What is the total items and amount spent for each member before they became a member?
 9. If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
 10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
+
+**Check my solution [HERE](https://github.com/KannaKit/8_Week_SQL_Challenge/blob/main/Case%20Study%20%231%20-%20Danny's%20Diner/CaseStudyQuestion_solution.md)**
+
+## ❔ Bonus Questions
+### Join All The Things
+The following questions are related creating basic data tables that Danny and his team can use to quickly derive insights without needing to join the underlying tables using SQL.
+
+### Rank All The Things
+Danny also requires further information about the `ranking` of customer products, but he purposely does not need the ranking for non-member purchases so he expects null `ranking` values for the records when customers are not yet part of the loyalty program.
+
+**Check my solution [HERE](https://github.com/KannaKit/8_Week_SQL_Challenge/blob/main/Case%20Study%20%231%20-%20Danny's%20Diner/BonusQuestions_solution.md)**
