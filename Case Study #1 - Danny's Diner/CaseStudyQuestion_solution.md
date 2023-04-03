@@ -63,6 +63,12 @@ ORDER BY customer_id;
 | B           | 2021-01-01 | curry        |
 | C           | 2021-01-01 | ramen        |
 
+> 💡 Difference between `RANK()` and `DENSE_RANK()`
+>
+>`RANK()` 1,2,3,4,5... number continues even if the values are same.
+>
+>`DENSE_RANK()` 1,2,2,3,4... asigns same number if the values are same.
+
 ---
 ### 4. What is the most purchased item on the menu and how many times was it purchased by all customers?
 
