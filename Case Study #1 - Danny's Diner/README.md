@@ -91,3 +91,10 @@ The following questions are related creating basic data tables that Danny and hi
 Danny also requires further information about the `ranking` of customer products, but he purposely does not need the ranking for non-member purchases so he expects null `ranking` values for the records when customers are not yet part of the loyalty program.
 
 **Check my solution [HERE](https://github.com/KannaKit/8_Week_SQL_Challenge/blob/main/Case%20Study%20%231%20-%20Danny's%20Diner/BonusQuestions_solution.md)** 🧚
+
+## Data Visualization
+
+<p align="center">
+<img src="https://user-images.githubusercontent.com/106714718/229632747-c1fc26e7-1fa1-42c8-b427-920ee8e7da2d.png" align="center" width="800" height="800">
+
+**Check my interactive Tableau dashboad [HERE](https://public.tableau.com/app/profile/kanna2901/viz/dannydiner_customerA/Dashboard1)** 🧚
