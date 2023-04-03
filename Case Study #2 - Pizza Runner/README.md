@@ -115,7 +115,7 @@ If Danny wants to expand his range of pizzas - how would this impact the existin
 
 ▶️ **Check my solution [HERE](https://github.com/KannaKit/8_Week_SQL_Challenge/blob/main/Case%20Study%20%231%20-%20Danny's%20Diner/CaseStudyQuestion_solution.md)**
 
-    ---
+---
   
 ## 👩‍💻 Data Visualization
 
