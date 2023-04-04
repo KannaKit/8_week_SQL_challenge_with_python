@@ -132,6 +132,8 @@ GROUP BY runner_id;
 | 2         | 62.90            |
 | 3         | 40.00            |
 
+Runner ID 2 is a lot faster than other 2 runners, however this dataset is too small to really determine that.
+
 ---
 
 ### 7. What is the successful delivery percentage for each runner?
