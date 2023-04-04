@@ -14,15 +14,11 @@ FROM cte;
 
 | registrationweek | num_runner |
 |------------------|------------|
-| 1                | 1          |
 | 0                | 2          |
+| 1                | 1          |
 | 2                | 1          |
-| 19               | 1          |
-| 21               | 3          |
-| 23               | 3          |
 
 The CTE part works perfectly except it shows week 0 as week 53 because the week includes last December so it counts as the last week of the last year. 
-
 
 ---
 
@@ -33,14 +29,15 @@ SELECT runner_id, EXTRACT(MINUTE FROM AVG(pickup_time - order_time)) AS Avg_Time
 FROM runner_orders1 r
 JOIN customer_orders1 c ON r.order_id = c.order_id
 WHERE cancellation IS NULL
-GROUP BY runner_id;
+GROUP BY runner_id
+ORDER BY 1;
 ```
 
 | runner_id | avg_time_to_hq |
 |-----------|----------------|
 | 1         | 15             |
-| 3         | 10             |
 | 2         | 23             |
+| 3         | 10             |
 
 ---
 
@@ -152,12 +149,13 @@ WITH cancel AS (SELECT runner_id,
 SELECT runner_id, 
          (CASE WHEN canceled_order > 0 THEN (canceled_order::float/total_order::float)*100
               WHEN canceled_order = 0 THEN 100
-         ELSE 100 END)AS success_Rate
-FROM cancel;
+         ELSE 100 END)AS successRate
+FROM cancel
+ORDER BY 1;
 ```
 
 | runner_id | success_rate |
 |-----------|--------------|
-| 3         | 50           |
-| 2         | 25           |
 | 1         | 100          |
+| 2         | 25           |
+| 3         | 50           |
