@@ -95,6 +95,6 @@ Danny also requires further information about the `ranking` of customer products
 ## Data Visualization
 
 <p align="center">
-<img src="https://user-images.githubusercontent.com/106714718/229997444-30f84f73-90f3-49c9-9663-897c41cc09a6.png" align="center" width="649" height="859">
+<img src="https://user-images.githubusercontent.com/106714718/229999085-6ce2f456-f0d4-4ed6-89ac-3e8d96e9bd95.png" align="center" width="649" height="859">
 
 **Check my interactive Tableau dashboad [HERE](https://public.tableau.com/app/profile/kanna2901/viz/DannysDinerViz/Dashboard1)** 🧚
