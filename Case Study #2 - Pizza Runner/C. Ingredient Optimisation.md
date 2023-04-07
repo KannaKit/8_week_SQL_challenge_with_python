@@ -249,73 +249,198 @@ It works but I'm sure there are probably milion better and simpler ways to do it
 For example: `"Meat Lovers: 2xBacon, Beef, ... , Salami"`
 
 ```TSQL
-SELECT MAX(duration)-MIN(duration) difference
-FROM runner_orders1
-WHERE cancellation IS NULL;
+--Add a row number column to the cleaned customer_orders1 table.
+SELECT *, ROW_NUMBER() OVER(ORDER BY order_id, pizza_id) order_n
+INTO customer_orders1_rn
+FROM customer_orders1;
 ```
 
-| difference | 
-|-------------|
-| 30         |
+Build a table with basic recipe.
+
+```TSQL
+DROP TABLE IF EXISTS base_recipe;
+CREATE TEMP TABLE base_recipe AS 
+   
+   SELECT
+     t4.row_number,
+     t4.order_id,
+     t4.customer_id,
+     t1.pizza_id,
+     t1.pizza_name,
+     t2.topping,
+     t3.topping_name
+   FROM
+     pizza_runner.pizza_names t1
+     JOIN pizza_recipes1 t2 ON t1.pizza_id=t2.pizza_id
+     JOIN pizza_runner.pizza_toppings t3 ON t2.topping=t3.topping_id
+     RIGHT JOIN customer_orders1_rn t4 ON t1.pizza_id=t4.pizza_id;
+```
+
+Make 2 seperate tables for exclusions and extras.
+
+```TSQL
+ -- Exclusions table
+ DROP TABLE IF EXISTS order_exclusions;
+ CREATE TEMP TABLE order_exclusions AS 
+ SELECT
+   row_number_order,
+   order_id,
+   customer_id,
+   t1.pizza_id,
+   pizza_name,
+   CAST(UNNEST(string_to_array(COALESCE(exclusions, '0'), ','))AS INT) AS exclusions
+ FROM
+   customer_orders_cleaned t1
+ JOIN pizza_runner.pizza_names t2 ON t1.pizza_id=t2.pizza_id
+ ORDER BY
+   order_id;
+   
+-- Extra table
+DROP TABLE IF EXISTS order_extras;
+ CREATE TEMP TABLE order_extras AS 
+ SELECT
+   row_number,
+   order_id,
+   customer_id,
+   t1.pizza_id,
+   pizza_name,
+   CAST(UNNEST(string_to_array(COALESCE(extras, '0'), ','))AS INT) AS extras
+ FROM
+   customer_orders1_rn t1
+ JOIN pizza_runner.pizza_names t2 ON t1.pizza_id=t2.pizza_id
+ ORDER BY
+   order_id;
+```
+
+Join all the tables (Union extras, Except exclusions)
+
+```TSQL
+DROP TABLE IF EXISTS pizzas_details;
+    CREATE TEMP TABLE pizzas_details AS
+    WITH first_layer AS (SELECT
+      row_number,
+      order_id,
+      customer_id,
+      pizza_id,
+      pizza_name,
+      topping
+    FROM
+      base_recipe
+    EXCEPT
+    SELECT
+      *
+    FROM
+      order_exclusions
+    UNION ALL
+    SELECT
+      *
+    FROM
+      order_extras
+    WHERE
+      extras != 0)
+    SELECT
+      row_number,
+      order_id,
+      customer_id,  
+      pizza_id,
+      pizza_name,
+      first_layer.topping,
+      topping_name
+    FROM
+      first_layer
+    LEFT JOIN pizza_runner.pizza_toppings ON first_layer.topping = pizza_toppings.topping_id
+    ORDER BY
+      row_number,
+      order_id,
+      pizza_id,
+      topping_id;
+```
+
+Reshape the table to answer the question.
+
+```TSQL
+WITH counting_table AS(
+   SELECT
+     row_number,
+     order_id,
+     customer_id,
+     pizza_id,
+     pizza_name,
+     topping,
+     topping_name,
+     COUNT(topping) AS count_ingredient
+   FROM
+     pizzas_details
+   GROUP BY
+     row_number,
+     order_id,
+     customer_id,
+     pizza_id,
+     pizza_name,
+     topping,
+     topping_name)
+   , text_table AS(
+   SELECT
+     row_number,
+     order_id,
+     pizza_id,
+     pizza_name,
+     topping,
+     CASE WHEN count_ingredient = 1 THEN topping_name
+          ELSE CONCAT(count_ingredient, 'x ', topping_name)
+     END AS ingredient_count
+   FROM counting_table)
+   , group_text AS(
+   SELECT
+     row_number,
+     order_id,
+     pizza_id,
+     pizza_name,
+     STRING_AGG(ingredient_count, ', ') AS recipe
+   FROM
+     text_table
+   GROUP BY
+     row_number,
+     order_id,
+     pizza_id,
+     pizza_name)
+   SELECT
+     order_id,
+     CONCAT(pizza_name, ': ', recipe) recipe
+   FROM
+     group_text
+   ORDER BY
+     row_number,
+     order_id;
+```
+
+First 4 lines.
+
+| order_id | recipe                                                                            |
+|----------|-----------------------------------------------------------------------------------|
+| 1        | Meatlovers: Cheese, Chicken, Salami, Bacon, Beef, Pepperoni, Mushrooms, BBQ Sauce |
+| 2        | Meatlovers: Chicken, BBQ Sauce, Pepperoni, Salami, Cheese, Beef, Bacon, Mushrooms |
+| 3        | Meatlovers: Salami, Chicken, BBQ Sauce, Beef, Bacon, Mushrooms, Pepperoni, Cheese |
+| 3        | Vegetarian: Onions, Tomato Sauce, Mushrooms, Tomatoes, Peppers, Cheese            |
 
 ---
 
-### 6. What was the average speed for each runner for each delivery and do you notice any trend for these values?
+### 6. What is the total quantity of each ingredient used in all delivered pizzas sorted by most frequent first?
 
 ```TSQL
-SELECT runner_id, ROUND(AVG(distance::NUMERIC/duration::NUMERIC),2) AS speed_km_per_min
-FROM runner_orders1
-WHERE cancellation IS NULL
-GROUP BY runner_id;
+SELECT topping_name, COUNT(topping) AS time_used
+FROM pizzas_details
+GROUP BY topping, topping_name
+ORDER BY time_used DESC;
 ```
 
-| runner_id | speed_km_per_min |
-|-----------|------------------|
-| 1         | 0.76             |
-| 2         | 1.05             |
-| 3         | 0.67             |
+First 5 lines.
 
-If we want to know km per hour then,
+| topping_name | time_used |
+|--------------|-----------|
+| Bacon        | 14        |
+| Mushrooms    | 13        |
+| Chicken      | 11        |
+| Cheese       | 11        |
+| Pepperoni    | 10        |
 
-```TSQL
-SELECT runner_id, ROUND(AVG((distance/duration)::NUMERIC)*60.0,2) AS speed_km_per_hour
-FROM runner_orders1
-WHERE cancellation IS NULL
-GROUP BY runner_id;
-```
-
-| runner_id | speed_km_per_hour |
-|-----------|------------------|
-| 1         | 45.54            |
-| 2         | 62.90            |
-| 3         | 40.00            |
-
-Runner ID 2 is a lot faster than other 2 runners, however this dataset is too small to really determine that.
-
----
-
-### 7. What is the successful delivery percentage for each runner?
-
-```TSQL
-WITH cancel AS (SELECT runner_id, 
-                      (SUM(CASE WHEN cancellation IS NOT NULL THEN 1
-                                WHEN cancellation IS NULL THEN 0
-                       ELSE 0 END)) AS canceled_order,
-                COUNT(order_id) AS total_order
-                FROM runner_orders1
-                GROUP BY runner_id)
-                
-                
-SELECT runner_id, 
-         (CASE WHEN canceled_order > 0 THEN (canceled_order::float/total_order::float)*100
-              WHEN canceled_order = 0 THEN 100
-         ELSE 100 END)AS successRate
-FROM cancel
-ORDER BY 1;
-```
-
-| runner_id | success_rate |
-|-----------|--------------|
-| 1         | 100          |
-| 2         | 25           |
-| 3         | 50           |
