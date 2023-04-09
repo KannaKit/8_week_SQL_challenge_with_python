@@ -146,8 +146,8 @@ WHERE cancellation IS NULL;
 ```TSQL
 SELECT EXTRACT(hour from order_time) as hourly_data, count(order_id) as total_pizza_ordered
 FROM customer_orders1
-GROUP BY hourlydata
-ORDER BY hourlydata;
+GROUP BY hourly_data
+ORDER BY hourly_data;
 ```
 
 | hourly_data | total_pizza_ordered |
@@ -166,8 +166,8 @@ ORDER BY hourlydata;
 ```TSQL
 SELECT to_char(order_time, 'Day') as daily_data, count(order_id) as total_pizza_ordered
 FROM customer_orders1
-GROUP BY DailyData
-ORDER BY totalPizzaOrdered Desc;
+GROUP BY daily_data
+ORDER BY total_pizza_ordered Desc;
 ```
 
 | daily_data | total_pizza_ordered |
