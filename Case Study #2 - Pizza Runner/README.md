@@ -65,7 +65,7 @@ Before you start writing your SQL queries however - you might want to investigat
 6. What was the average speed for each runner for each delivery and do you notice any trend for these values?
 7. What is the successful delivery percentage for each runner?  
   
-▶️ **Check my solution [HERE](https://github.com/KannaKit/8_Week_SQL_Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/B_Runner%26CustomerExperience.md)** 
+▶️ **Check my solution [HERE](https://github.com/KannaKit/8_Week_SQL_Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/B.%20Runner%20and%20Customer%20Experience.md)** 
   
 ---
   
