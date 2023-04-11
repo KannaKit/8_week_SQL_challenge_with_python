@@ -248,6 +248,8 @@ First 5 rows.
 | 90 - 120 days  | 35        |
 | 120 - 150 days | 43        |
 
+`WIDTH_BUCKET` is a function that assigns values to buckets.  
+
 ---
 
 ### 11. How many customers downgraded from a pro monthly to a basic monthly plan in 2020?
