@@ -248,19 +248,19 @@ First 5 rows.
 | 90 - 120 days  | 35        |
 | 120 - 150 days | 43        |
 
-`WIDTH_BUCKET` is a function that assigns values to buckets.
-
-I added `customer_id` and `n_days_till_upgrade` (day_upgrade-day1) columns to CTE 'bins' to make it easier to understand, and the table looks like this. (First 5 rows)
-
-| customer_id | n_days_till_upgrade | day_bin |
-|-------------|---------------------|---------------------|
-| 2           | 7                   | 1                   |
-| 9           | 7                   | 1                   |
-| 16          | 143                 | 5                   |
-| 17          | 137                 | 5                   |
-| 19          | 68                  | 3                   |
-
-The first row means customer 2 took 7 days to upgrade to the `pro monthly` plan, and "7 days" fall in the #1 bin. 
+> `WIDTH_BUCKET` is a function that assigns values to buckets.
+>
+> I added `customer_id` and `n_days_till_upgrade` (day_upgrade-day1) columns to CTE 'bins' to make it easier to understand, and the table looks like this. (First 5 rows)
+>
+> | customer_id | n_days_till_upgrade | day_bin |
+> |-------------|---------------------|---------------------|
+> | 2           | 7                   | 1                   |
+> | 9           | 7                   | 1                   |
+> | 16          | 143                 | 5                   |
+> | 17          | 137                 | 5                   |
+> | 19          | 68                  | 3                   |
+>
+> The first row means customer 2 took 7 days to upgrade to the `pro monthly` plan, and "7 days" fall in the #1 bin. 
 
 ---
 
