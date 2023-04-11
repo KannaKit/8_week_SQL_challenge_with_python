@@ -227,15 +227,15 @@ WITH cte AS(
  
  -- Sort values above in buckets of 12 with range of 30 days each
  bins AS (
-  SELECT WIDTH_BUCKET(day_upgrade-day1, 0, 360, 12) AS avg_days_to_upgrade
+  SELECT WIDTH_BUCKET(day_upgrade-day1, 0, 360, 12) AS day_bin
   FROM start s
   JOIN upgrade_annual u ON s.customer_id=u.customer_id) 
  
-SELECT ((avg_days_to_upgrade-1)*30 || ' - ' || (avg_days_to_upgrade)*30) || ' days' AS breakdown,
+SELECT ((day_bin-1)*30 || ' - ' || (day_bin)*30) || ' days' AS breakdown,
        COUNT(*) AS customers
 FROM bins
-GROUP BY avg_days_to_upgrade
-ORDER BY avg_days_to_upgrade;
+GROUP BY day_bin
+ORDER BY day_bin;
 ```
 
 First 5 rows.
@@ -248,7 +248,19 @@ First 5 rows.
 | 90 - 120 days  | 35        |
 | 120 - 150 days | 43        |
 
-`WIDTH_BUCKET` is a function that assigns values to buckets.  
+`WIDTH_BUCKET` is a function that assigns values to buckets.
+
+I added `customer_id` and `n_days_till_upgrade` (day_upgrade-day1) columns to CTE 'bins' to make it easier to understand, and the table looks like this. (First 5 rows)
+
+| customer_id | n_days_till_upgrade | day_bin |
+|-------------|---------------------|---------------------|
+| 2           | 7                   | 1                   |
+| 9           | 7                   | 1                   |
+| 16          | 143                 | 5                   |
+| 17          | 137                 | 5                   |
+| 19          | 68                  | 3                   |
+
+The first row means customer 2 took 7 days to upgrade to the `pro monthly` plan, and "7 days" fall in the #1 bin. 
 
 ---
 
