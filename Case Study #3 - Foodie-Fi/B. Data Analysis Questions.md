@@ -110,11 +110,11 @@ WITH ranking AS (
  JOIN plans p ON s.plan_id=p.plan_id
  )
  
- SELECT 
-  COUNT(*) AS churn_count,
-  ROUND(100*COUNT(*)/(SELECT COUNT(DISTINCT customer_id) FROM subscriptions),0) AS churn_percentage
+ SELECT plan_name, COUNT(DISTINCT customer_id) n_customer, ROUND((CAST(COUNT(DISTINCT customer_id) AS NUMERIC)/(SELECT CAST(COUNT(DISTINCT customer_id)AS NUMERIC) FROM subscriptions))*100,1) percentage
  FROM ranking
- WHERE plan_id=4 AND plan_rank=2;
+ WHERE plan_rank=2
+ GROUP BY plan_name
+ ORDER BY n_customer DESC;
 ```
 
 | plan_name     | n_customer | percentage |
