@@ -93,6 +93,6 @@ Example outputs for this table might look like the following (first 8 rows):
 ## 👩‍💻 Data Visualization
 
 <p align="center">
-<img src="https://user-images.githubusercontent.com/106714718/231005408-7f38d1df-1a38-4ba2-8ea0-1a273c8f4856.png" align="center" width="1023" height="767">
+<img src="https://user-images.githubusercontent.com/106714718/231650958-2dd40b20-a8da-44a4-a8e0-d1255b714944.png" align="center" width="1000" height="800">
 
-▶️ **Check my Tableau dashboad [HERE](https://public.tableau.com/app/profile/kanna.kitsunai/viz/Book3_16810915673240/Dashboard2)** 
+▶️ **Check my Tableau dashboad [HERE](https://public.tableau.com/app/profile/kanna2901/viz/Foodie-fi/Dashboard2?publish=yes)** 
