@@ -22,8 +22,6 @@ JOIN regions r ON c.region_id=r.region_id
 GROUP BY region_name;
 ```
 
-First 5 rows.
-
 | region_name | count |
 |----------------|----------------|
 | America              | 735             |
