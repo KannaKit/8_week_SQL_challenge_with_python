@@ -72,56 +72,46 @@ GROUP BY month_n;
 ### 4. What is the closing balance for each customer at the end of the month?
 
 ```TSQL
-WITH cte AS (SELECT
-    customer_id,
-    date_trunc('month', txn_date) + interval '1 month' - interval '1 day' AS end_date,
-    SUM(CASE WHEN txn_type IN ('withdrawal', 'purchase') THEN -txn_amount
-             ELSE txn_amount END) AS transactions
-  FROM customer_transactions
-  GROUP BY customer_id, end_date
-  ORDER BY customer_id, end_date),
-  
-  cte2 AS 
-  (SELECT customer_id,
-          end_date,
-          EXTRACT(MONTH FROM end_date) n_month,
-          SUM(transactions) OVER(PARTITION BY customer_id ORDER BY end_date ROWS UNBOUNDED PRECEDING) AS closing_balance
-  FROM cte),
-  
-  add_rows AS (
-  SELECT 
-    customer_id,
-    string_agg(n_month::text, ', ') list_months
-  FROM cte2
-  GROUP BY customer_id
-  ORDER BY customer_id
-),
-
-add_rows2 AS (SELECT 
-  add_rows.customer_id, 
+--determine the last day of the months
+--this doesn't include the month if the customer has no transaction
+WITH txn_month AS (
+ SELECT
+	customer_id,
+	STRING_AGG(DISTINCT(EXTRACT(MONTH FROM txn_date))::TEXT, ', ') n_month
+ FROM customer_transactions
+ GROUP BY customer_id
+ ORDER BY customer_id),
+ 
+--determine which month each customers are missing
+missing_month AS (SELECT 
+ txn_month.customer_id, 
   array(
     SELECT 
       unnest(ARRAY['1', '2', '3', '4']) 
       EXCEPT 
       SELECT 
-        unnest(string_to_array(list_months, ', '))
+        unnest(string_to_array(n_month, ', '))
     ) missing_months
-FROM add_rows
-ORDER BY add_rows.customer_id)
+FROM txn_month
+ORDER BY 1)
 
+--unnest missing_months column, and change to INT data type
 SELECT 
- add_rows2.customer_id,
- CAST(n_month AS INT) n_month
-INTO add_missing_months 
-FROM add_rows2
-CROSS JOIN UNNEST(add_rows2.missing_months) AS n_month (missing_months);
+ customer_id,
+ CAST(UNNEST(missing_month.missing_months)AS INT) AS missing_month
+INTO missing_months_tbl
+FROM missing_month;
 
-ALTER TABLE add_missing_months ADD closing_balance INT;
+--add closing_balance column 
+ALTER TABLE missing_months_tbl 
+ADD closing_balance INT;
 
-INSERT INTO add_missing_months (closing_balance)
+--add null to closing_balance column
+INSERT INTO missing_months_tbl (closing_balance)
 VALUES(NULL);
 
-WITH cte AS (SELECT
+--'withdrawal', 'purchase' are negative and 'deposit' is positive amount
+WITH txn AS (SELECT
     customer_id,
     date_trunc('month', txn_date) + interval '1 month' - interval '1 day' AS end_date,
     SUM(CASE WHEN txn_type IN ('withdrawal', 'purchase') THEN -txn_amount
@@ -130,36 +120,33 @@ WITH cte AS (SELECT
   GROUP BY customer_id, end_date
   ORDER BY customer_id, end_date),
    
-  cte2 AS (SELECT customer_id,
-          EXTRACT(MONTH FROM end_date) n_month,
-          SUM(transactions) OVER(PARTITION BY customer_id ORDER BY end_date ROWS UNBOUNDED PRECEDING) AS closing_balance
-  FROM cte
+  txn2 AS (
+	  SELECT 
+	    customer_id,
+        end_date,
+        SUM(transactions) OVER(PARTITION BY customer_id ORDER BY end_date ROWS UNBOUNDED PRECEDING) AS closing_balance
+  FROM txn
   UNION ALL
-  SELECT * 
-  FROM add_missing_months
-  ORDER BY customer_id, n_month),
-  
-cte3 AS (SELECT
+  SELECT 
+  customer_id, 
+  CAST((CASE WHEN missing_month=1 THEN '2020-1-31'
+             WHEN missing_month=2 THEN '2020-2-29'
+             WHEN missing_month=3 THEN '2020-3-31'
+             WHEN missing_month=4 THEN '2020-4-30'
+       ELSE NULL END)AS DATE) end_date,
+  closing_balance
+FROM missing_months_tbl
+ORDER BY customer_id, end_date),
+
+txn3 AS 
+(SELECT
   customer_id,
-  CAST((CASE WHEN n_month=1 THEN '2020-1-31'
-             WHEN n_month=2 THEN '2020-2-29'
-             WHEN n_month=3 THEN '2020-3-31'
-             WHEN n_month=4 THEN '2020-4-30'
-       ELSE NULL END)AS DATE) last_day,
-         n_month,
-        (CASE WHEN closing_balance IS NULL 
-              THEN LAG(COALESCE(closing_balance)) OVER(PARTITION BY customer_id ORDER BY n_month)
-          ELSE closing_balance END) closing_balance
-FROM cte2)
+  end_date,
+  (CASE WHEN closing_balance IS NULL THEN LAG(COALESCE(closing_balance)) OVER(PARTITION BY customer_id ORDER BY end_date)
+   ELSE closing_balance END) closing_balance
+FROM txn2)
 
-SELECT customer_id, last_day, 
-       (CASE WHEN closing_balance IS NULL 
-             THEN LAG(closing_balance) OVER(PARTITION BY customer_id ORDER BY n_month)
-        ELSE closing_balance END) closing_balance
-INTO closing_balance_tbl
-FROM cte3;
-
-SELECT * FROM closing_balance_tbl;
+SELECT * FROM txn3;
 ```
 
 First 5 rows.
