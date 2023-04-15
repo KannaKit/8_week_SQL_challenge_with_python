@@ -97,7 +97,7 @@ The Data Bank team wants you to use the outputs generated from the above section
 
 * Using the outputs generated from the customer node questions, generate a few headline insights which Data Bank might use to market it’s world-leading security features to potential investors and customers.
 
-  ▶️ **Check my solution [HERE](https://github.com/KannaKit/8_Week_SQL_Challenge/blob/main/Case%20Study%20%234%20-%20Data%20Bank/Extension%20Request.md)**
+▶️ **Check my solution [HERE](https://github.com/KannaKit/8_Week_SQL_Challenge/blob/main/Case%20Study%20%234%20-%20Data%20Bank/Extension%20Request.md)**
   
  --- 
   
