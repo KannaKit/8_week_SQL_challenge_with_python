@@ -41,6 +41,8 @@ WITH cte AS (
   FROM impact_tbl;
 ```
 
+First 5 rows.
+
 | customer_id | txn_date   | txn_type | txn_amount | transaction_order | plus_minus | balance |
 |-------------|------------|----------|------------|-------------------|------------|---------|
 | 1	           | 2020-01-02 | deposit  | 	312        | 1                 | 312        | 312     |
