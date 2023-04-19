@@ -151,7 +151,7 @@ SELECT * FROM txn3;
 
 First 5 rows.
 
-| customer_id | last_day   | closing_balance |
+| customer_id | end_date   | closing_balance |
 |-------------|------------|-----------------|
 | 1	           | 2020-01-31 | 	312             |
 | 1	           | 2020-02-29 | 	312             |
