@@ -178,6 +178,8 @@ First 5 rows.
 
 ### 5. What is the percentage of customers who increase their closing balance by more than 5%?
 
+We are going to use the table from question 4 as `closing_balance_tbl`
+
 ```TSQL
 DROP TABLE IF EXISTS april;
 CREATE TEMP TABLE april AS (
