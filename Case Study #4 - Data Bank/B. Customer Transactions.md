@@ -138,13 +138,19 @@ WITH txn AS (SELECT
 FROM missing_months_tbl
 ORDER BY customer_id, end_date),
 
-txn3 AS 
-(SELECT
+txn3 AS (
+SELECT
   customer_id,
   end_date,
-  (CASE WHEN closing_balance IS NULL THEN LAG(COALESCE(closing_balance)) OVER(PARTITION BY customer_id ORDER BY end_date)
-   ELSE closing_balance END) closing_balance
-FROM txn2)
+  FIRST_VALUE(closing_balance) OVER(PARTITION BY value_partition ORDER BY customer_id, end_date) closing_balance
+FROM (
+	SELECT
+		customer_id,
+		end_date,
+	   	closing_balance,
+        SUM(CASE WHEN closing_balance IS NULL THEN 0 ELSE 1 END) OVER(ORDER BY customer_id, end_date) as value_partition
+	FROM txn2
+	ORDER BY customer_id, end_date) AS q)
 
 SELECT * FROM txn3;
 ```
@@ -158,6 +164,15 @@ First 5 rows.
 | 1	           | 2020-03-31 | 	-640            |
 | 1	           | 2020-04-30 | 	-640            |
 | 2	           | 2020-01-31 | 	549             |
+
+> The last CTE part I referred to is this [answer](https://stackoverflow.com/a/19012333/17736130) on StackOverflow.
+>
+> Let's say that the customer doesn't have any transactions in February. 
+> `FIRST VALUE()` and `LAG()` refer to the value on the value on `2020-01-31`, so it will work just fine. 
+> But the problem is if the customer has a transaction in February but doesn't have a transaction in March then `FIRST VALUE()` refers to the January value so it'll be wrong.
+> And also if the customer has no transaction in February and March `LAG()` only works for February but not March.
+>
+> In the `FROM` cause, the part I aliased as `value_partition` works like `IGNORE NULLS` (PostgreSQL doesn't support `IGNORE NULLS`) and fixes the problems above. 
 
 ---
 
