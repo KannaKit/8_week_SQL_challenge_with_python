@@ -104,6 +104,10 @@ The Data Bank team wants you to use the outputs generated from the above section
   ## 👩‍💻 Data Visualization
 
 <p align="center">
-<img src="https://user-images.githubusercontent.com/106714718/231651232-09138b23-5d81-4c7d-ae61-bf9a7ce9a4ae.png" align="center" width="1000" height="800">
+<img src="https://user-images.githubusercontent.com/106714718/233513128-a1edb6e0-9b7f-4e9f-9c27-eb33c4d0e570.png" align="center" width="1016" height="964">
 
-▶️ **Check my Tableau dashboad [HERE](https://public.tableau.com/app/profile/kanna2901/viz/Foodie-fi/Dashboard2?publish=yes)** 
+▶️ **Check my Tableau dashboad [HERE](https://public.tableau.com/app/profile/kanna2901/viz/DataBank_16820365890510/Dashboard1?publish=yes)** 
+
+This Data Bank data only contains `region` column and that is not enough to make a map on Tableau.
+So I used this [wikipedia](https://en.m.wikipedia.org/wiki/List_of_sovereign_states_and_dependent_territories_by_continent_(data_file)#/) to make a csv file to connect region and country codes.
+I added the csv file above, feel free to use it if you need.
