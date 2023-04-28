@@ -116,7 +116,7 @@ Do you have any further recommendations for Danny’s team at Data Mart or any i
   ## 👩‍💻 Data Visualization
 
 <p align="center">
-<img src="https://user-images.githubusercontent.com/106714718/235058574-d54e991a-3cd0-4dff-8219-86d712f853bf.png" align="center" width="1599" height="899">
+<img src="https://user-images.githubusercontent.com/106714718/235059267-68f87f84-8636-45d0-9e37-153966111183.png" align="center" width="1000" height="562">
 
 ▶️ **Check my Tableau dashboad [HERE](https://public.tableau.com/app/profile/kanna2901/viz/DataMartSalesDashboard/Dashboard2?publish=yes)** 
 
