@@ -116,9 +116,9 @@ Do you have any further recommendations for Danny’s team at Data Mart or any i
   ## 👩‍💻 Data Visualization
 
 <p align="center">
-<img src="https://user-images.githubusercontent.com/106714718/233513128-a1edb6e0-9b7f-4e9f-9c27-eb33c4d0e570.png" align="center" width="1016" height="964">
+<img src="https://user-images.githubusercontent.com/106714718/235058574-d54e991a-3cd0-4dff-8219-86d712f853bf.png" align="center" width="1600" height="900">
 
-▶️ **Check my Tableau dashboad [HERE](https://public.tableau.com/app/profile/kanna2901/viz/DataBank_16820365890510/Dashboard1?publish=yes)** 
+▶️ **Check my Tableau dashboad [HERE](https://public.tableau.com/app/profile/kanna2901/viz/DataMartSalesDashboard/Dashboard2?publish=yes)** 
 
 This Data Bank data only contains `region` column and that is not enough to make a map on Tableau.
 So I used this [wikipedia](https://en.m.wikipedia.org/wiki/List_of_sovereign_states_and_dependent_territories_by_continent_(data_file)#/) to make a csv file to connect region and country codes.
