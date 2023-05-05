@@ -92,12 +92,6 @@ Some ideas you might want to investigate further include:
   ## 👩‍💻 Data Visualization
 
 <p align="center">
-<img src="https://user-images.githubusercontent.com/106714718/235059267-68f87f84-8636-45d0-9e37-153966111183.png" align="center" width="1000" height="562">
+<img src="https://user-images.githubusercontent.com/106714718/236565287-e8fd0bea-58d3-463d-b235-8a281afa290e.png" align="center" width="1000" height="562">
 
-▶️ **Check my Tableau dashboad [HERE](https://public.tableau.com/app/profile/kanna2901/viz/DataMartSalesDashboard/Dashboard2?publish=yes)** 
-
-This Data Mart data only contains `region` column and that is not enough to make a map on Tableau.
-So I used this [wikipedia](https://en.m.wikipedia.org/wiki/List_of_sovereign_states_and_dependent_territories_by_continent_(data_file)#/) to make a csv file to connect region and country codes.
-I added the csv file above, feel free to use it if you need.
-
-  
+▶️ **Check my Tableau dashboad [HERE](https://public.tableau.com/app/profile/kanna2901/viz/CliqueBaitCustomerAnalysisDashboard/Dashboard2?publish=yes)** 
