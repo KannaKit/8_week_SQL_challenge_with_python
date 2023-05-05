@@ -1,0 +1,309 @@
+# 🌄 Case Study #7 - Balanced Tree Clothing Co.
+## 👕 Product Analysis
+### 1. What are the top 3 products by total revenue before discount?
+
+```TSQL
+WITH cte AS (
+SELECT
+  prod_id, SUM(qty) total_qty
+FROM sales
+GROUP BY 1
+)
+
+SELECT cte.prod_id, product_name, (total_qty*s.price) total_revenue
+FROM cte
+LEFT JOIN sales s ON cte.prod_id=s.prod_id
+LEFT JOIN product_details pd ON cte.prod_id=pd.product_id
+GROUP BY cte.prod_id, product_name, total_qty, s.price
+ORDER BY total_revenue DESC
+LIMIT 3;
+```
+
+| prod_id | product_name                 | total_revenue |
+|---------|------------------------------|---------------|
+| 2a2353  | Blue Polo Shirt - Mens       | 217683        |
+| 9ec847  | Grey Fashion Jacket - Womens | 209304        |
+| 5d267b  | White Tee Shirt - Mens       | 152000        |
+
+---
+
+### 2. What is the total quantity, revenue and discount for each segment?
+
+```TSQL
+SELECT
+  segment_id,
+  segment_name,
+  SUM(qty) total_qty,
+  ROUND(SUM((pd.price*qty) * (discount::NUMERIC/100)),2) total_discounts,
+  ROUND(SUM((s.price * s.qty) * (1 - discount::NUMERIC/100)),2) total_revenue
+FROM sales s
+LEFT JOIN product_details pd ON s.prod_id=pd.product_id
+GROUP BY 1,2;
+```
+
+| segment_id | segment_name | total_qty | total_discounts | total_revenue |
+|------------|--------------|-----------|-----------------|---------------|
+| 4	          | Jacket       | 	11385     | 44277.46        | 322705.54     |
+| 6	          | Socks        | 	11217     | 37013.44        | 270963.56     |
+| 5	          | Shirt        | 	11265     | 49594.27        | 356548.73     |
+| 3	          | Jeans        | 	11349     | 25343.97        | 183006.03     |
+
+---
+
+### 3. What is the top selling product for each segment?
+
+```TSQL
+WITH cte AS (
+SELECT
+  prod_id,
+  product_name,
+  segment_id,
+  segment_name,
+  SUM(qty) total_qty
+FROM sales s
+LEFT JOIN product_details pd ON s.prod_id=pd.product_id
+GROUP BY 1,2,3,4),
+
+cte2 AS (
+SELECT 
+  *,
+  ROW_NUMBER() OVER(PARTITION BY segment_id ORDER BY total_qty DESC) row_n
+FROM cte)
+
+SELECT segment_name, product_name, total_qty
+FROM cte2
+WHERE row_n=1;
+```
+
+| segment_name | product_name                  | total_qty |
+|--------------|-------------------------------|-----------|
+| Jeans        | Navy Oversized Jeans - Womens | 	3856      |
+| Jacket       | Grey Fashion Jacket - Womens  | 	3876      |
+| Shirt        | Blue Polo Shirt - Mens        | 	3819      |
+| Socks        | Navy Solid Socks - Mens       | 	3792      |
+
+---
+
+### 4. What is the total quantity, revenue and discount for each category?
+
+```TSQL
+SELECT
+  category_id,
+  category_name,
+  SUM(qty) total_qty,
+  ROUND(SUM((s.price * s.qty) * (1 - discount::NUMERIC/100)),2) total_revenue,
+  ROUND(SUM((pd.price*qty) * (discount::NUMERIC/100)),2) total_discount
+FROM sales s
+LEFT JOIN product_details pd ON s.prod_id=pd.product_id
+GROUP BY 1,2
+ORDER BY 1;
+```
+
+| category_id | category_name | total_qty | total_revenue | total_discount |
+|-------------|---------------|-----------|---------------|----------------|
+| 1	           | Womens        | 	22734     | 505711.57     | 69621.43       |
+| 2	           | Mens          | 	22482     | 627512.29     | 86607.71       |
+
+---
+
+### 5. What is the top selling product for each category?
+
+```TSQL
+WITH cte AS (
+SELECT
+  prod_id,
+  product_name,
+  category_id,
+  category_name,
+  SUM(qty) total_qty
+FROM sales s
+LEFT JOIN product_details pd ON s.prod_id=pd.product_id
+GROUP BY 1,2,3,4),
+
+cte2 AS (
+SELECT 
+  *,
+  ROW_NUMBER() OVER(PARTITION BY category_id ORDER BY total_qty DESC) row_n
+FROM cte)
+
+SELECT category_name, product_name, total_qty
+FROM cte2
+WHERE row_n=1;
+```
+
+| category_name | product_name                 | total_qty |
+|---------------|------------------------------|-----------|
+| Womens        | Grey Fashion Jacket - Womens | 	3876      |
+| Mens          | Blue Polo Shirt - Mens       | 	3819      |
+
+---
+
+### 6. What is the percentage split of revenue by product for each segment?
+
+```TSQL
+WITH cte AS (
+SELECT 
+  segment_id, 
+  segment_name,
+  product_id,
+  product_name,
+  ROUND(SUM((s.price * s.qty) * (1 - discount::NUMERIC/100)),2) total_revenue
+FROM sales s
+LEFT JOIN product_details pd ON s.prod_id=pd.product_id
+GROUP BY product_id, product_name, segment_id, segment_name)
+
+SELECT
+  segment_id, 
+  segment_name,
+  product_name,
+  total_revenue,
+  ROUND((total_revenue/SUM(total_revenue) OVER(PARTITION BY segment_id))*100,1) percentage
+FROM cte;
+```
+
+First 5 rows.
+
+| segment_id | segment_name | product_name                  | total_revenue | percentage |
+|------------|--------------|-------------------------------|---------------|------------|
+| 3	          | Jeans        | Navy Oversized Jeans - Womens | 	43992.39      | 24.0       |
+| 3	          | Jeans        | Black Straight Jeans - Womens | 	106407.04     | 58.1       |
+| 3	          | Jeans        | Cream Relaxed Jeans - Womens  | 	32606.60      | 17.8       |
+| 4	          | Jacket       | Indigo Rain Jacket - Womens   | 	62740.47      | 19.4       |
+| 4	          | Jacket       | Khaki Suit Jacket - Womens    | 	76052.95      | 23.6       |
+
+---
+
+### 7. What is the percentage split of revenue by segment for each category?
+
+```TSQL
+WITH cte AS (
+SELECT 
+  category_id, 
+  category_name, 
+  segment_id,
+  segment_name,
+  ROUND(SUM((s.price * s.qty) * (1 - discount::NUMERIC/100)),2) total_revenue
+FROM sales s
+LEFT JOIN product_details pd ON s.prod_id=pd.product_id
+GROUP BY 1,2,3,4)
+
+SELECT
+  segment_name,
+  category_name,
+  ROUND((total_revenue/SUM(total_revenue) OVER(PARTITION BY category_id))*100,1) percentage
+FROM cte;
+```
+
+| segment_name | category_name | percentage |
+|--------------|---------------|------------|
+| Jacket       | Womens        | 	63.8       |
+| Jeans        | Womens        | 	36.2       |
+| Shirt        | Mens          | 	56.8       |
+| Socks        | Mens          | 	43.2       |
+
+---
+
+### 8. What is the percentage split of total revenue by category?
+
+```TSQL
+WITH cte AS (
+SELECT 
+  category_id, 
+  category_name, 
+  ROUND(SUM((s.price * s.qty) * (1 - discount::NUMERIC/100)),2) total_revenue
+FROM sales s
+LEFT JOIN product_details pd ON s.prod_id=pd.product_id
+GROUP BY 1,2)
+
+SELECT 
+  category_name,
+  total_revenue,
+  ROUND((total_revenue/SUM(total_revenue) OVER())*100,1) percentage
+FROM cte
+GROUP BY 1,2;
+```
+
+| category_name | category_name | percentage |
+|--------------|---------------|------------|
+| Mens          | 	627512.29       | 55.4 |
+| Womens        | 	505711.57       | 44.6 |
+
+---
+
+### 9. What is the total transaction “penetration” for each product? 
+(hint: penetration = number of transactions where at least 1 quantity of a product was purchased divided by total number of transactions)
+
+```TSQL
+SELECT
+  product_name,
+  n_sold AS n_items_sold,
+  ROUND(100 * (n_sold::NUMERIC / total_transactions) ,2) AS penetration
+FROM (SELECT pd.product_id,
+             pd.product_name,
+             COUNT(DISTINCT txn_id) AS n_sold,
+             (SELECT COUNT(DISTINCT txn_id)
+              FROM sales) AS total_transactions
+      FROM sales AS s
+      JOIN product_details pd ON s.prod_id=pd.product_id
+      GROUP BY pd.product_id,
+               pd.product_name) AS tmp
+GROUP BY product_name, n_items_sold, penetration               
+ORDER BY penetration DESC;
+```
+
+First 5 rows.
+
+| product_name                  | n_items_sold | penetration |
+|-------------------------------|--------------|-------------|
+| Navy Solid Socks - Mens       | 	1281         | 51.24       |
+| Grey Fashion Jacket - Womens  | 	1275         | 51.00       |
+| Navy Oversized Jeans - Womens | 	1274         | 50.96       |
+| Blue Polo Shirt - Mens        | 	1268         | 50.72       |
+| White Tee Shirt - Mens        | 	1268         | 50.72       |
+
+---
+
+### 10. What is the most common combination of at least 1 quantity of any 3 products in a 1 single transaction?
+
+For this question I refered to [this](https://github.com/iweld/8-Week-SQL-Challenge/blob/main/Case%20Study%207%20-%20Balanced%20Tree/questions_and_answers.md)
+
+```TSQL
+-- Select the 3 item combination and the count of the amount of times items where bought together.
+SELECT product_1,
+	   product_2,
+	   product_3,
+	   times_bought_together
+FROM (
+		-- Create a CTE that joins the Sales table with the Product Details table and gather the
+		-- transaction id's and product names.
+		with products AS(
+			SELECT txn_id,
+				   product_name
+			FROM sales AS s
+		    JOIN product_details AS pd ON s.prod_id = pd.product_id
+		) -- Use self-joins to create every combination of products.  Each column is derived from its own table.
+		SELECT p.product_name AS product_1,
+			   p1.product_name AS product_2,
+			   p2.product_name AS product_3,
+			   COUNT(*) AS times_bought_together,
+			   ROW_NUMBER() OVER(ORDER BY COUNT(*) DESC) AS rank -- Use a window function to apply a unique row number to each permutation.
+		FROM products AS p
+			JOIN products AS p1 ON p.txn_id = p1.txn_id -- Self-join table 1 to table 2
+			AND p.product_name != p1.product_name -- Ensure that we DO NOT duplicate items.
+			AND p.product_name < p1.product_name -- Self-join table 1 to table 3
+			JOIN products AS p2 ON p.txn_id = p2.txn_id
+			AND p.product_name != p2.product_name -- Ensure that we DO NOT duplicate items in the first table.
+			AND p1.product_name != p2.product_name -- Ensure that we DO NOT duplicate items in the second table.
+			AND p.product_name < p2.product_name
+			AND p1.product_name < p2.product_name
+		GROUP BY p.product_name,
+			p1.product_name,
+			p2.product_name
+	) AS tmp
+WHERE RANK = 1;
+-- Filter only the highest ranking item.
+```
+
+| product_1                    | product_2                   | product_3              | times_bought_together |
+|------------------------------|-----------------------------|------------------------|-----------------------|
+| Grey Fashion Jacket - Womens | Teal Button Up Shirt - Mens | White Tee Shirt - Mens | 	352                   |
