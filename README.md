@@ -1,18 +1,9 @@
 # 💪 8-Week SQL Challenge 💪
 
-This repository contains my solution for the [#8WeekSQLChallenge](https://8weeksqlchallenge.com/) using PostgreSQL.
-
-## 📜 Table of Contents
-* [Case Study #1 - Danny's Diner](https://github.com/KannaKit/Danny_Ma/tree/main#-case-study-1---dannys-diner)
-* [Case Study #2 - Pizza Runner](https://github.com/KannaKit/Danny_Ma/tree/main#-case-study-2---pizza-runner)
-* [Case Study #3 - Foodie-Fi](https://github.com/KannaKit/Danny_Ma/tree/main#-case-study-3---foodie-fi)
-* [Case Study #4 - Data Bank](https://github.com/KannaKit/Danny_Ma/tree/main#-case-study-4---data-bank)
-* [Case Study #5 - Data Mart](https://github.com/KannaKit/Danny_Ma/tree/main#-case-study-5---data-mart)
-* [Case Study #6 - Clique Bait](https://github.com/KannaKit/Danny_Ma/tree/main#-case-study-6---clique-bait)
-* [Case Study #7 - Balanced Tree Clothing Co.](https://github.com/KannaKit/Danny_Ma/tree/main#-case-study-7---balanced-tree-clothing-co)
-* [Case Study #8 - Fresh Segments](https://github.com/KannaKit/Danny_Ma/tree/main#-case-study-8---fresh-segments)
+This repository contains my solution for the [#8WeekSQLChallenge](https://8weeksqlchallenge.com/) using PostgreSQL15.
 
 ---
+
 ## 🍜 Case Study #1 - Danny's Diner
 <p align="center">
 <img src="https://user-images.githubusercontent.com/106714718/228987558-30b6c113-cf93-407d-b221-79c8cb59422b.png" align="center" width="400" height="400" >
