@@ -50,22 +50,26 @@ SELECT
   count_month_year,
   COUNT(interest_id) interests
 FROM cte
-GROUP BY 1)
+GROUP BY 1),
 
+cte3 AS (
 SELECT *,
        ROUND(SUM(interests) OVER (ORDER BY count_month_year DESC) / SUM(interests) OVER () *100.0 ,1) cumulative_pct
-FROM cte2;
-```
+FROM cte2)
 
-First 5 rows. 
+SELECT *
+FROM cte3
+WHERE cumulative_pct > 90.0;
+```
 
 | count_month_year | interests | cumulative_pct |
 |------------------|-----------|----------------|
-| 14               | 480       | 39.9           |
-| 13               | 82        | 46.8           |
-| 12               | 65        | 52.2           |
-| 11               | 94        | 60.0           |
-| 10               | 86        | 67.1           |
+| 6                | 33        | 90.8           |
+| 5                | 38        | 94             |
+| 4                | 32        | 96.7           |
+| 3                | 15        | 97.9           |
+| 2                | 12        | 98.9           |
+| 1                | 13        | 100            |
 
 ---
 
