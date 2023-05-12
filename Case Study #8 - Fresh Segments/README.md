@@ -65,6 +65,6 @@ Most questions can be answered using a single query however some questions are m
 ## 👩‍💻 Data Visualization
 
 <p align="center">
-<img src="https://github.com/KannaKit/8_Week_SQL_Challenge/assets/106714718/bd31398d-ed33-4bb7-b21e-b5e9afc40a16" align="center" width="1000" height="562">
+<img src="https://github.com/KannaKit/8_Week_SQL_Challenge/assets/106714718/b09eaf36-1f58-46d9-98ae-722694077816" align="center" width="1024" height="768">
 
-▶️ **Check my Tableau dashboad [HERE](https://public.tableau.com/app/profile/kanna2901/viz/balancedtreeclothingco_businessreport/Dashboard2?publish=yes)** 
+▶️ **Check my Tableau dashboad [HERE](https://public.tableau.com/app/profile/kanna2901/viz/freshsegmentsinterestanalysis/Dashboard2?publish=yes)** 
