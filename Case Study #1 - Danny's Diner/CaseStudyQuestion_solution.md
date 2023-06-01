@@ -146,24 +146,25 @@ WHERE ranking = 1;
 
 ```TSQL
 WITH cte AS (
-	SELECT s.customer_id, order_date, product_id, join_date, ROW_NUMBER() OVER(PARTITION BY s.customer_id ORDER BY order_date) r_n 
+	SELECT s.customer_id, order_date, product_id, join_date, DENSE_RANK() OVER(PARTITION BY s.customer_id ORDER BY order_date) rank_n 
 	FROM sales s
 	RIGHT JOIN members m ON s.customer_id = m.customer_id
 	WHERE order_date < join_date),
 	
 cte2 AS(
-	SELECT *, MAX(r_n) OVER(PARTITION BY customer_id) max_row
+	SELECT *, MAX(rank_n) OVER(PARTITION BY customer_id) max_row
 	FROM cte)
 
 SELECT customer_id, product_name
 FROM cte2
-LEFT JOIN menu me ON cte3.product_id = me.product_id
-WHERE r_n=max_row
+LEFT JOIN menu me ON cte2.product_id = me.product_id
+WHERE rank_n=max_row
 ORDER BY customer_id;
 ```
 
 | customer_id | product_name |
 |-------------|-----------|
+| A          | sushi    |
 | A          | curry    |
 | B          | sushi     |
 
