@@ -156,7 +156,7 @@ cte2 AS(
 	FROM cte)
 
 SELECT customer_id, product_name
-FROM cte3
+FROM cte2
 LEFT JOIN menu me ON cte3.product_id = me.product_id
 WHERE r_n=max_row
 ORDER BY customer_id;
