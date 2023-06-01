@@ -145,27 +145,29 @@ WHERE ranking = 1;
 ### 7. Which item was purchased just before the customer became a member?
 
 ```TSQL
-WITH first_purchase_asMenmber AS (
-	SELECT 
-	  me.customer_id, 
-	  m.product_name, 
-	  order_date, 
-	  join_date, 
-	  DENSE_RANK() OVER (PARTITION BY s.customer_id ORDER BY order_date) AS ranking
-    FROM sales s
-    INNER JOIN members me ON me.customer_id = s.customer_id
-    LEFT JOIN menu m ON s.product_id = m.product_id
-    WHERE order_date >= join_date)
- 
+WITH cte AS (
+	SELECT s.customer_id, order_date, product_id, join_date, ROW_NUMBER() OVER(PARTITION BY s.customer_id ORDER BY order_date) r_n 
+	FROM sales s
+	RIGHT JOIN members m ON s.customer_id = m.customer_id
+	WHERE order_date < join_date),
+	
+cte2 AS(
+	SELECT *, MAX(r_n) OVER(PARTITION BY customer_id) max_row
+	FROM cte)
+
 SELECT customer_id, product_name
-FROM first_purchase_asMenmber
-WHERE ranking = 1;
+FROM cte3
+LEFT JOIN menu me ON cte3.product_id = me.product_id
+WHERE r_n=max_row
+ORDER BY customer_id;
 ```
 
 | customer_id | product_name |
 |-------------|-----------|
 | A          | curry    |
 | B          | sushi     |
+
+I accidentaly put the exact same code with question 6, I updated the code on June 1, 2023. 
 
 ---
 ### 8. What is the total items and amount spent for each member before they became a member?
