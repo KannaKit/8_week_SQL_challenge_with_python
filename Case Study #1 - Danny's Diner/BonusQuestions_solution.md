@@ -91,7 +91,7 @@ ORDER BY sales.customer_id, order_date, product_name)
 SELECT 
   *,
   (CASE WHEN member = 'N' THEN NULL
-   ELSE DENSE_RANK() OVER(PARTITION BY customer_id ORDER BY order_date) END) AS ranking
+   ELSE DENSE_RANK() OVER(PARTITION BY customer_id, member ORDER BY order_date) END) AS ranking
 FROM member;
 ```
 
@@ -112,3 +112,6 @@ FROM member;
 | C     | 2021-01-01 | ramen        | 12    | N      | null    |
 | C     | 2021-01-01 | ramen        | 12    | N      | null    |
 | C     | 2021-01-07 | ramen        | 12    | N      | null    |
+
+I noticed I had a mistake in my code.
+I fixed it on June 2, 2023.
