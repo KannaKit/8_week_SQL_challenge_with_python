@@ -57,7 +57,7 @@ ORDER BY sales.customer_id, order_date, product_name;
 ### Rank All The Things
 Danny also requires further information about the ranking of customer products, but he purposely does not need the ranking for non-member purchases so he expects null ranking values for the records when customers are not yet part of the loyalty program.
 
-| er_id | order_date | product_name | price | member | ranking |
+| customer_id | order_date | product_name | price | member | ranking |
 |-------|------------|--------------|-------|--------|---------|
 | A     | 2021-01-01 | curry        | 15    | N      | null    |
 | A     | 2021-01-01 | sushi        | 10    | N      | null    |
