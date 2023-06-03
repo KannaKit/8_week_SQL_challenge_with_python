@@ -18,6 +18,8 @@ import matplotlib.pyplot as plt
 Read files from the [case study](https://8weeksqlchallenge.com/case-study-1/).  
 If you need guidance on reading files, I recommend watching this [video](https://www.youtube.com/watch?v=dUpyC40cF6Q&list=PLUaB-1hjhk8FE_XZ87vPPSfHqb6OcM0cF&index=53) I used to learn from. Shout out to [Alex the Analyst](https://www.youtube.com/@AlexTheAnalyst)👏
 
+
+
 ## Case Study Questions
 ### 1. What is the total amount each customer spent at the restaurant?
 ###### SQL
