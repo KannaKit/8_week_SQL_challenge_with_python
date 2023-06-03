@@ -1,7 +1,22 @@
 # 🍜 Case Study #1 - Danny's Diner
+
+### Import packages
+
+```python
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+```
+
+### Reading in Files
+
+Read files from the [case study](https://8weeksqlchallenge.com/case-study-1/).  
+If you need guidance on reading files, I recommend watching this [video](https://www.youtube.com/watch?v=dUpyC40cF6Q&list=PLUaB-1hjhk8FE_XZ87vPPSfHqb6OcM0cF&index=53) I used to learn from.  
+Shout out to [Alex the Analyst](https://www.youtube.com/@AlexTheAnalyst)👏
+
 ## Case Study Questions
 ### 1. What is the total amount each customer spent at the restaurant?
-
+###### SQL
 
 ```TSQL
 SELECT customer_id, sum(price) total_spent
@@ -12,19 +27,47 @@ GROUP BY customer_id
 ORDER BY 1;
 ```
 
+###### Python
+
+```python
+#left join sales & menu tables
+sa_me = sales.merge(menu, how = 'left')
+
+sum_per_customer = sa_me.groupby('customer_id')['price'].sum()
+print(sum_per_customer)
+```
+
 customer_id	| total_spent
  --- | --- 
 A|	76
 B|	74
 C|	36
 
+###### Python Plot
+
+```python
+sum_per_customer.plot(kind = 'bar', title = 'Total $ Spent Per Customer')
+```
+
+<img src="https://github.com/KannaKit/8_week_SQL_challenge_by_python/assets/106714718/3675f870-ba12-4907-b6a0-befce4dfe418" align="center" width="368" height="276" >
+
 ---
+
 ### 2. How many days has each customer visited the restaurant?
+###### SQL
 
 ```TSQL
 SELECT customer_id, COUNT(DISTINCT(order_date)) day_count
 FROM sales
 GROUP BY customer_id;
+```
+
+###### Python
+
+```python
+visit_n_per_customer = sa_me.groupby('customer_id')['order_date'].nunique()
+
+print(visit_n_per_customer)
 ```
 
 | customer_id | day_count |
@@ -33,8 +76,18 @@ GROUP BY customer_id;
 | B           | 6         |
 | C           | 2         |
 
+###### Python Plot
+
+```python
+visit_n_per_customer.plot(kind = 'bar', title = 'Visit Count Per Customer')
+```
+
+<img src="https://github.com/KannaKit/8_week_SQL_challenge_by_python/assets/106714718/24a98d93-0f7f-4a76-af80-5755d45e2a98" align="center" width="362" height="276" >
+
 ---
+
 ### 3. What was the first item from the menu purchased by each customer?
+###### SQL
 
 I used DENSE_RANK here because order_date is not time stamped data so we wouldn't know which one is the first order if it's made on the same day.
 
@@ -56,6 +109,18 @@ GROUP BY first.customer_id, product_name, order_date
 ORDER BY customer_id;
 ```
 
+###### Python
+
+```python
+s_rank = sa_me
+
+s_rank['rank'] = sa_me.groupby('customer_id')['order_date'].rank(method='dense', ascending=True).astype(int)
+
+first_item = s_rank[s_rank['rank'] == 1].sort_values(by='customer_id', ascending=True).drop_duplicates()
+
+first_item[['customer_id', 'order_date', 'product_name']]
+```
+
 | customer_id | order_date | product_name |
 |-------------|------------|--------------|
 | A           | 2021-01-01 | curry        |
@@ -71,6 +136,7 @@ ORDER BY customer_id;
 
 ---
 ### 4. What is the most purchased item on the menu and how many times was it purchased by all customers?
+###### SQL
 
 ```TSQL
 SELECT COUNT(s.product_id) AS most_purchased, product_name
@@ -82,12 +148,22 @@ ORDER BY most_purchased DESC
 LIMIT 1;
 ```
 
+###### Python
+
+```python
+purchased_item_count = sa_me.groupby('product_name').size()
+
+filtered_count = purchased_item_count[purchased_item_count.index.str.contains('ramen')]
+print(filtered_count)
+```
+
 | most_purchased | product_name |
 |-------------|-----------|
 | 8          | ramen     |
 
 ---
 ### 5. Which item was the most popular for each customer?
+###### SQL
 
 ```TSQL
 WITH pop AS (
@@ -105,6 +181,22 @@ LEFT JOIN menu m
   ON pop.product_id = m.product_id
 WHERE ranking = 1
 ORDER BY customer_id;
+```
+
+###### Python
+
+```python
+# make a data frame for this question
+popular = sa_me
+
+# group by customer_id, product_id, product_name and count how many times ordered, alias the order count column
+popular = popular.groupby(['customer_id','product_id', 'product_name']).agg({"order_date": "count"}).rename(columns={"order_date": "order_n"})
+
+# rank by order count, partition by customer_id
+popular['rank'] = popular.groupby(['customer_id'])['order_n'].rank(method='dense', ascending=False).astype(int)
+
+# show only rank=1
+popular[popular['rank'] == 1].sort_values(by='customer_id', ascending=True)
 ```
 
 | customer_id | product_name | ordered_count |
