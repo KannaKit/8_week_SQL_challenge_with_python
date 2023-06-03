@@ -1,5 +1,10 @@
 # 🍜 Case Study #1 - Danny's Diner
 
+### ⚠️ Disclaimer
+
+Some of the queries and Python codes might not return the exact same results. I made sure that they are at least very similar and answered the question.    
+All the tables shown are actually the table markdown I made for my repository [8_Week_SQL_Challenge](https://github.com/KannaKit/8_Week_SQL_Challenge), therefore my python codes might show slightly different table if you try to run. 
+
 ### Import packages
 
 ```python
@@ -11,8 +16,7 @@ import matplotlib.pyplot as plt
 ### Reading in Files
 
 Read files from the [case study](https://8weeksqlchallenge.com/case-study-1/).  
-If you need guidance on reading files, I recommend watching this [video](https://www.youtube.com/watch?v=dUpyC40cF6Q&list=PLUaB-1hjhk8FE_XZ87vPPSfHqb6OcM0cF&index=53) I used to learn from.  
-Shout out to [Alex the Analyst](https://www.youtube.com/@AlexTheAnalyst)👏
+If you need guidance on reading files, I recommend watching this [video](https://www.youtube.com/watch?v=dUpyC40cF6Q&list=PLUaB-1hjhk8FE_XZ87vPPSfHqb6OcM0cF&index=53) I used to learn from. Shout out to [Alex the Analyst](https://www.youtube.com/@AlexTheAnalyst)👏
 
 ## Case Study Questions
 ### 1. What is the total amount each customer spent at the restaurant?
@@ -87,9 +91,10 @@ visit_n_per_customer.plot(kind = 'bar', title = 'Visit Count Per Customer')
 ---
 
 ### 3. What was the first item from the menu purchased by each customer?
-###### SQL
 
 I used DENSE_RANK here because order_date is not time stamped data so we wouldn't know which one is the first order if it's made on the same day.
+
+###### SQL
 
 ```TSQL
 WITH first AS 
@@ -209,6 +214,7 @@ popular[popular['rank'] == 1].sort_values(by='customer_id', ascending=True)
 
 ---
 ### 6. Which item was purchased first by the customer after they became a member?
+###### SQL
 
 ```TSQL
 WITH first_purchase_asMenmber AS (
@@ -228,6 +234,23 @@ FROM first_purchase_asMenmber
 WHERE ranking = 1;
 ```
 
+###### Python
+
+```python
+#merge sales, menu and members table, exclude customer who never became a member(=right join)
+sa_me_me = sa_me.merge(members, how='right')
+
+#filter out orders made before join_date
+after_join = sa_me_me[sa_me_me['order_date']>=sa_me_me['join_date']]
+
+# row_number() over (partition by customer_id order by order_date)
+after_join['rank'] = after_join.groupby(['customer_id'])['order_date'].rank(method='dense', ascending=True).astype(int)
+
+first_purchased = after_join[after_join['rank']==1]
+
+first_purchased[['customer_id', 'product_name']]
+```
+
 | customer_id | product_name |
 |-------------|-----------|
 | A          | curry    |
@@ -235,6 +258,7 @@ WHERE ranking = 1;
 
 ---
 ### 7. Which item was purchased just before the customer became a member?
+###### SQL
 
 ```TSQL
 WITH cte AS (
@@ -254,16 +278,39 @@ WHERE rank_n=max_row
 ORDER BY customer_id;
 ```
 
+###### Python
+
+```python
+#merge sales, menu and members table, exclude customer who never became a member(=right join)
+sa_me_me = sa_me.merge(members, how='right')
+
+#filter out orders made after join_date
+bef_join = sa_me_me[sa_me_me['order_date']<sa_me_me['join_date']]
+
+# dense_rank() over (partition by customer_id order by order_date)
+bef_join['rank'] = bef_join.groupby(['customer_id'])['order_date'].rank(method='dense', ascending=True).astype(int)
+
+# determine max rank number for each customer
+max_rank = bef_join.groupby(['customer_id']).agg({'rank':'max'}).rename(columns={"rank":"max_rank"})
+
+# join tables
+bef_join = bef_join.merge(max_rank, how = 'right', on='customer_id')
+
+# search for orders rank = max rank
+bef_join = bef_join[bef_join['rank']==bef_join['max_rank']]
+
+bef_join[['customer_id', 'product_name']]
+```
+
 | customer_id | product_name |
 |-------------|-----------|
 | A          | sushi    |
 | A          | curry    |
 | B          | sushi     |
 
-I accidentaly put the exact same code with question 6, I updated the code on June 1, 2023. 
-
 ---
 ### 8. What is the total items and amount spent for each member before they became a member?
+###### SQL
 
 ```TSQL
 SELECT s.customer_id, COUNT(s.product_id) ordered_count, SUM(price) total_spent
@@ -277,6 +324,15 @@ GROUP BY s.customer_id
 ORDER BY s.customer_id;
 ```
 
+###### Python
+
+```python
+#filter out orders made after join_date
+bef_join2 = sa_me_me[sa_me_me['order_date']<sa_me_me['join_date']]
+
+bef_join2.groupby('customer_id').agg({'price':['count', 'sum']})
+```
+
 | customer_id | ordered_count | total_spent |
 |-------------|---------------|-------------|
 | A           | 2             | 25          |
@@ -284,6 +340,7 @@ ORDER BY s.customer_id;
 
 ---
 ### 9.  If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
+###### SQL
 
 ```TSQL
 WITH point AS (SELECT *,
@@ -300,14 +357,42 @@ GROUP BY customer_id
 ORDER BY customer_id;
 ```
 
+###### Python
+
+```python
+# copy sales and menu convined table
+sa_me2 = sa_me
+
+# create a point column, for now equall to price
+sa_me2['point'] = sa_me2['price']
+
+# 2 times more points to sushi order (CASE statement)
+sa_me2['point'] = np.where(sa_me2['product_name']!='sushi', sa_me2['point']*10, sa_me2['point']*20)
+
+# sum all the points per customer
+point = sa_me2.groupby('customer_id')['point'].sum()
+
+point
+```
+
 | customer_id | total_point |
 |-------------|-------------|
 | A           | 860         |
 | B           | 940         |
 | C           | 360         |
 
+###### Python Plot
+
+```python
+point.plot(kind = 'bar', title = 'Total Point Per Customer')
+```
+
+<img src="https://github.com/KannaKit/8_week_SQL_challenge_by_python/assets/106714718/3c66e6ff-58cb-4389-a884-1ab9d30a6489" align="center" width="375" height="276" >
+
 ---
+
 ### 10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
+###### SQL
 
 ```TSQL
 WITH dates_cte AS 
@@ -331,8 +416,46 @@ WHERE order_date < d.last_date
 GROUP BY d.customer_id;
 ```
 
+###### Python
+
+```python
+# load timedelta package
+from datetime import timedelta
+
+# change join_date column to datetime
+first_week['join_date'] = pd.to_datetime(first_week['join_date'])
+
+#determine each customer's end date for bonus
+first_week = sa_me_me
+first_week['end_date'] = first_week['join_date'] + timedelta(days=6)
+
+first_week['order_date'] = pd.to_datetime(first_week['order_date'])
+first_week['end_date'] = pd.to_datetime(first_week['end_date'])
+
+# 2 times more points to sushi order (CASE statement)
+first_week['point'] = np.where((first_week['product_name']!='sushi') & (first_week['order_date'] < first_week['join_date']), first_week['price']*10, 
+                      np.where((first_week['product_name']=='sushi') & (first_week['order_date'] < first_week['join_date']), first_week['price']*20,
+                      np.where((first_week['order_date'] >= first_week['join_date']) & (first_week['order_date'] <= first_week['end_date']), first_week['price']*20, first_week['price']*10)))
+
+# exclude order after 2021-02-01
+point2 = first_week[first_week.order_date < '2021-02-01']
+
+# sum up point for each customer
+point2 = point2.groupby('customer_id')['point'].sum()
+
+point2
+```
+
 | customer_id | total_point |
 |-------------|-------------|
 | A           | 1370         |
 | B           | 820         |
+
+###### Python Plot
+
+```python
+point2.plot(kind = 'bar', title = 'Total Point Per Customer')
+```
+
+<img src="https://github.com/KannaKit/8_week_SQL_challenge_by_python/assets/106714718/aa5af45b-0f9b-414b-bb5d-d8dbcb033471" align="center" width="381" height="276" >
 
