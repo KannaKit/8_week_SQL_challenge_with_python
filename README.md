@@ -1,6 +1,6 @@
-# 💪 8-Week SQL Challenge 💪
+# 💪 8-Week SQL Challenge by Python 💪
 
-This repository contains my solution for the [#8WeekSQLChallenge](https://8weeksqlchallenge.com/) using PostgreSQL15.
+This repository contains my solution for the [#8WeekSQLChallenge](https://8weeksqlchallenge.com/) using Python.
 
 ---
 
