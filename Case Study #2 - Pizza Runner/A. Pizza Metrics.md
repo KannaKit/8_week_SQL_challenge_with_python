@@ -47,7 +47,7 @@ ORDER BY runner_id;
 
 ---
 
-### 4. How many successful orders were delivered by each runner?
+### 4. How many of each type of pizza was delivered?
 
 ```TSQL
 SELECT pizza_id, COUNT(pizza_id)
