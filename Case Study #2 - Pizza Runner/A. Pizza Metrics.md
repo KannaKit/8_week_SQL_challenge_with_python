@@ -25,7 +25,7 @@ count	|
 10 |	
 
 I accidentally copy and pasted the same code with question 1.
-I ffixed it on June 4, 2023.
+I fixed it on June 4, 2023.
 
 ---
 
