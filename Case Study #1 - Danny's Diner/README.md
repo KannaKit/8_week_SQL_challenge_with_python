@@ -81,7 +81,7 @@ Each of the following case study questions can be answered using a single SQL st
 9. If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
 10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
 
-**Check my solution [HERE](https://github.com/KannaKit/8_Week_SQL_Challenge/blob/main/Case%20Study%20%231%20-%20Danny's%20Diner/CaseStudyQuestion_solution.md)** 🧚
+**Check my solution [HERE](https://github.com/KannaKit/8_week_SQL_challenge_by_python/blob/main/Case%20Study%20%231%20-%20Danny's%20Diner/CaseStudyQuestion_solution.md#2-how-many-days-has-each-customer-visited-the-restaurant)** 🧚
 
 ## ❔ Bonus Questions
 ### Join All The Things
@@ -90,7 +90,7 @@ The following questions are related creating basic data tables that Danny and hi
 ### Rank All The Things
 Danny also requires further information about the `ranking` of customer products, but he purposely does not need the ranking for non-member purchases so he expects null `ranking` values for the records when customers are not yet part of the loyalty program.
 
-**Check my solution [HERE](https://github.com/KannaKit/8_Week_SQL_Challenge/blob/main/Case%20Study%20%231%20-%20Danny's%20Diner/BonusQuestions_solution.md)** 🧚
+**Check my solution [HERE](https://github.com/KannaKit/8_week_SQL_challenge_by_python/blob/main/Case%20Study%20%231%20-%20Danny's%20Diner/BonusQuestions_solution.md)** 🧚
 
 ## Data Visualization
 
