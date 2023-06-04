@@ -16,13 +16,16 @@ count	|
 ### 2. How many unique customer orders were made?
 
 ```TSQL
-SELECT COUNT(*)
+SELECT COUNT(DISTINCT order_id)
 FROM customer_orders1;
 ```
 
 count	| 
  --- |
 10 |	
+
+I accidentally copy and pasted the same code with question 1.
+I ffixed it on June 4, 2023.
 
 ---
 
