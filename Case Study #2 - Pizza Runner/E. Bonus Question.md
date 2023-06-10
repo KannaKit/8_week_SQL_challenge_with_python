@@ -4,6 +4,8 @@
 
 First, we will moderate `pizza_names` table.
 
+###### SQL
+
 ```TSQL
 DROP TABLE IF EXISTS pizza_names_added;
 CREATE TEMP TABLE pizza_names_added AS (
@@ -13,6 +15,17 @@ VALUES
  (3, 'Supreme');
  ```
  
+###### Python
+
+```python
+pizza_names_new = pizza_names
+
+# add a new row using loc
+pizza_names_new.loc['2']=[3, 'Supreme']
+
+pizza_names_new
+```
+ 
 | pizza_id | pizza_name |
 |----------|------------|
 | 1        | Meatlovers |
@@ -21,6 +34,8 @@ VALUES
  
 Next and lastly, we will add a new recipe to `pizza_recipes` table.
 
+###### SQL
+
 ```TSQL
 DROP TABLE IF EXISTS pizza_recipes_added;
 CREATE TEMP TABLE pizza_recipes_added AS (
@@ -28,6 +43,17 @@ CREATE TEMP TABLE pizza_recipes_added AS (
 INSERT INTO pizza_recipes_added
 VALUES
  (3, '1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12');
+```
+
+###### Python
+
+```python
+new_recipes = pizza_recipes
+
+# add a new row with a new recipe
+new_recipes.loc['2']=[3, '1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12']
+
+new_recipes
 ```
 
 | pizza_id | toppings                              |
