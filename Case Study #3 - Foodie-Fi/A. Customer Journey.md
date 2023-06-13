@@ -1,9 +1,31 @@
 # 🥑 Case Study #3 - Foodie-Fi
+### ⚠️ Disclaimer
+
+Some of the queries and Python codes might return different results. I ensured they were at least very similar and answered the question.    
+All the tables shown are actually the table markdown I made for my repository [8_Week_SQL_Challenge](https://github.com/KannaKit/8_Week_SQL_Challenge), therefore my Python codes might show slightly different table if you try to run. 
+
+### Import packages
+
+```python
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+```
+
+### Reading in Files
+
+Read files from the [case study](https://8weeksqlchallenge.com/case-study-3/).  
+If you need guidance on reading files, I recommend watching this [video](https://www.youtube.com/watch?v=dUpyC40cF6Q&list=PLUaB-1hjhk8FE_XZ87vPPSfHqb6OcM0cF&index=53) I used to learn from. Shout out to [Alex the Analyst](https://www.youtube.com/@AlexTheAnalyst)👏
+
+--- 
+
 ## 🚶 A. Customer Journey
 
 Based off the 8 sample customers provided in the sample from the `subscriptions` table, write a brief description about each customer’s onboarding journey.
 
 Try to keep it as short as possible - you may also want to run some sort of join to make your explanations a bit easier!
+
+###### SQL
 
 ```TSQL
 DROP TABLE IF EXISTS sample;
@@ -17,6 +39,18 @@ SELECT customer_id, plan_name, start_date, price
 FROM sample t1
 JOIN plans t2 ON t1.plan_id = t2.plan_id
 ORDER BY customer_id, t1.plan_id;
+```
+
+###### Python
+
+```python
+sample_customer = [1,2,11,13,15,16,18,19]
+
+df=subscriptions.merge(plans, how='inner')
+
+sample_customer = df[df['customer_id'].isin(sample_customer)].sort_values('customer_id', ascending=True)
+
+sample_customer
 ```
 
 First 5 rows.
