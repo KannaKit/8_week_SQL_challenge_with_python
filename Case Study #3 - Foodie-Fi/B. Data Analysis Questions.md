@@ -296,21 +296,17 @@ num_customer AS(
 ```python
 df = subscriptions
 
-# start_date is earlier than or equal to '2020-12-31'
-df = df[df['start_date']<='2020-12-31']
+df['next_date'] = df.sort_values('start_date', ascending=True).groupby('customer_id')['start_date'].shift(-1)
 
-#determine which plan is 
-df['plan_order_max'] = df.groupby('customer_id')['plan_order'].max().astype(int)
+filtered_df = df[((~df['next_date'].isna()) & (df['start_date'] < '2020-12-31') & (df['next_date'] > '2020-12-31')) | (df['next_date'].isna()) & (df['start_date'] < '2020-12-31')]
 
-df = df[df['plan_order']==df['plan_order_max']]
+grouped_df = filtered_df.groupby('plan_id')['customer_id'].count().reset_index(name='customer_n')
 
-df = df.groupby('plan_id')['customer_id'].count().reset_index(name='customer_n')
+grouped_df['percentage'] = grouped_df.customer_n*100/total_customer_n
 
-df = df.merge(plans, how='inner')
+result_df = grouped_df.merge(plans, how='inner')
 
-df['percentage']=(df.customer_n/sum(df.customer_n)*100).round(2)
-
-df = df[['plan_name', 'customer_n', 'percentage']]
+result_df = result_df[['plan_name', 'customer_n', 'percentage']]
 ```
 
 
@@ -321,6 +317,14 @@ df = df[['plan_name', 'customer_n', 'percentage']]
 | 2       | 326             | 32.00         |
 | 3       | 195             | 19.00         |
 | 4       | 235             | 23.00         |
+
+###### Python Plot
+
+```python
+plt.pie(result_df.percentage, labels = result_df.plan_name)
+```
+
+<img src="https://github.com/KannaKit/8_week_SQL_challenge_with_python/assets/106714718/29f1f6d9-6bf7-4f48-b1d4-61ce8038bf59" align="center" width="289" height="231" >
 
 ---
 
