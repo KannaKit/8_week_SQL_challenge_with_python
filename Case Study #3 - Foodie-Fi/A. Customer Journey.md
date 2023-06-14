@@ -10,6 +10,7 @@ All the tables shown are actually the table markdown I made for my repository [8
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 ```
 
 ### Reading in Files
