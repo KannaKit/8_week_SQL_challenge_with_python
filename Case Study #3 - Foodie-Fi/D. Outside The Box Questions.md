@@ -1,6 +1,7 @@
 # 🥑 Case Study #3 - Foodie-Fi
 ## 📤 D. Outside The Box Questions
 ### 1. How would you calculate the rate of growth for Foodie-Fi?
+###### SQL
 
 ```TSQL
 WITH monthlyRevenue AS (
@@ -18,6 +19,26 @@ SELECT
 FROM monthlyRevenue;
 ```
 
+###### Python
+
+```python
+df=payments
+
+df['payment_date'] = pd.to_datetime(df.payment_date)
+
+df['month_of_date'] = df['payment_date'].dt.month
+
+monthly_revenue = df.groupby('month_of_date')['amount'].sum().reset_index(name='revenue')
+
+monthly_revenue['lag_revenue'] = monthly_revenue.sort_values('month_of_date', ascending=True)['revenue'].shift(1)
+
+monthly_revenue['growth'] = (monthly_revenue.revenue-monthly_revenue.lag_revenue)/monthly_revenue.revenue
+
+result_df = monthly_revenue[['month_of_date', 'revenue', 'growth']]
+
+result_df
+```
+
 First 4 rows.
 
 | months | revenue | revenue_growth         |
@@ -26,6 +47,14 @@ First 4 rows.
 | 2      | 2762.80 | 0.53956131460836832199 |
 | 3      | 4173.70 | 0.33804537939957351990 |
 | 4      | 5744.60 | 0.27345681161438568395 |
+
+###### Python Plot
+
+```python
+result_df.plot(kind='bar', x='month_of_date', y='growth', title='Monthly Growth Rate')
+```
+
+<img src="https://github.com/KannaKit/8_week_SQL_challenge_with_python/assets/106714718/5efb51fe-77d5-4ac8-9970-a4e69780e1bc" align="center" width="380" height="282" >
 
 ---
 
