@@ -15,6 +15,8 @@ For this multi-part challenge question - you have been requested to generate the
 
 Using all of the data available - how much data would have been required for each option on a monthly basis?
 
+###### SQL
+
 ```TSQL
 WITH cte AS (
   SELECT 
@@ -41,6 +43,23 @@ WITH cte AS (
   FROM impact_tbl;
 ```
 
+###### Python
+
+```python
+df=tr
+
+df['plus_minus'] = np.where(df['txn_type']=='deposit', df.txn_amount, (df.txn_amount*-1))
+
+df['txn_order'] = df.sort_values(['customer_id', 'txn_date'], ascending=True)\
+                          .groupby('customer_id')['txn_date'].rank(method='first').astype(int)
+
+df['impact'] = df.sort_values(['customer_id', 'txn_date'], ascending=True).groupby(['customer_id'])['plus_minus'].cumsum()
+
+result=df[['customer_id', 'txn_date', 'txn_type', 'txn_amount', 'txn_order', 'plus_minus', 'impact']]
+
+result.sort_values(['customer_id', 'txn_date'], ascending=True)
+```
+
 First 5 rows.
 
 | customer_id | txn_date   | txn_type | txn_amount | transaction_order | plus_minus | balance |
@@ -51,5 +70,18 @@ First 5 rows.
 | 1	           | 2020-03-19 | purchase | 	664        | 4                 | -664       | -640    |
 | 2	           | 2020-01-03 | deposit  | 	549        | 1                 | 549        | 549     |
   
-`sum(count) over (order by day asc rows between unbounded preceding and current row)` is super useful to make `LOOP` happen in sql 👍 
+###### Python
+
+```python
+result.groupby('customer_id').agg({'impact':['mean', 'max', 'min']})
+```
  
+First 5 rows. 
+ 
+| customer_id | mean    | max  | min   |
+|-------------|---------|------|-------|
+| 1           | -151.00 | 312  | -640  |
+| 2           | 579.50  | 610  | 549   |
+| 3           | -732.40 | 144  | -1222 |
+| 4           | 653.66  | 848  | 458   |
+| 5           | -71.81  | 1780 | -2413 |
