@@ -9,6 +9,8 @@ Special notes:
 
 * Data Bank wants an initial calculation which does not allow for compounding interest, however they may also be interested in a daily compounding interest calculation so you can try to perform this calculation if you have the stamina!
 
+###### SQL
+
 ```TSQL
 --using the table created for challenge C
 WITH cte AS (SELECT *, LAG(txn_date) OVER(PARTITION BY customer_id ORDER BY txn_date) previous_txn
@@ -48,6 +50,26 @@ SELECT
   balance+interest balance_inc_interest
 FROM interest_tbl
 LIMIT 25;
+```
+
+###### Python
+
+```python
+df = result
+
+df['prev_txn'] = df.sort_values(['customer_id', 'txn_date'], ascending=True).groupby('customer_id')['txn_date'].shift(1)
+
+df['day_n'] = np.where(df.prev_txn.isna(), 1, (df.txn_date-df.prev_txn).dt.days).astype(int)
+
+daily_interest = 0.06/365
+
+df['interest']=np.where(df.impact>0, df.day_n*daily_interest, 0)
+
+df['balance_w_interest'] = (df.impact+df.interest)
+
+result=df[['customer_id', 'txn_date', 'txn_type', 'txn_amount', 'txn_order', 'impact', 'balance_w_interest']]
+
+result.sort_values(['customer_id', 'txn_date'], ascending=True)
 ```
 
 First 5 rows.
