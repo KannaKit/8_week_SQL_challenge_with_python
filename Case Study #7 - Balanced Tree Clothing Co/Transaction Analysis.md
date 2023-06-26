@@ -31,7 +31,7 @@ FROM cte;
 
 ---
 
-### 3. What was the total discount amount for all products?
+### 3. What are the 25th, 50th and 75th percentile values for the revenue per transaction?
 
 ```TSQL
 WITH cte AS (
