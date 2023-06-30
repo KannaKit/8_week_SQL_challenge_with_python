@@ -304,6 +304,59 @@ WHERE RANK = 1;
 -- Filter only the highest ranking item.
 ```
 
+###### Python
+
+```python
+# list up all possible combinations of product_id
+combinations = list(itertools.combinations(details.product_id, 3))
+
+# make the result a dataframe
+all_combo = pd.DataFrame(combinations)
+# change column names
+all_combo.columns=['prod1', 'prod2', 'prod3']
+
+df=sales
+
+# find what was purchased together
+df['bought_together']=df.groupby('txn_id')['prod_id'].transform(lambda x: ', '.join(x))
+
+df=df.drop_duplicates(subset=['txn_id'])
+
+# filter out single product order and 2 products order
+# count comma, 2 commas mean there are 3 items bought together
+df['comma_count']=df.bought_together.str.count(', ')
+df=df[df['comma_count']>=2]
+
+#keep only relavent column
+df=df[['bought_together']]
+
+matching_combinations = {}
+
+for i in all_combo.index:
+    combination = (all_combo['prod1'].iloc[i], all_combo['prod2'].iloc[i], all_combo['prod3'].iloc[i])
+    matching_rows = df['bought_together'].str.contains(combination[0]) & df['bought_together'].str.contains(combination[1]) & df['bought_together'].str.contains(combination[2])
+    count = matching_rows.sum()
+    matching_combinations[combination] = count
+
+# Convert the matching_combinations dictionary to a DataFrame
+result_df = pd.DataFrame(list(matching_combinations.items()), columns=['Combination', 'Match Count'])
+
+# Sort the DataFrame by 'Match Count' column in descending order
+result_df = result_df.sort_values(by='Match Count', ascending=False)
+
+# Get the most matched combination
+most_matched_combination = result_df.iloc[0, 0]
+
+# Create a new DataFrame with the values in separate columns
+most_matched_df = pd.DataFrame([most_matched_combination], columns=['Product1', 'Product2', 'Product3'])
+
+most_matched_df = most_matched_df.merge(details, how='inner', left_on='Product1', right_on='product_id')
+most_matched_df = most_matched_df.merge(details, how='inner', left_on='Product2', right_on='product_id')
+most_matched_df = most_matched_df.merge(details, how='inner', left_on='Product3', right_on='product_id')
+
+most_matched_df[['product_name_x', 'product_name_y', 'product_name']]
+```
+
 | product_1                    | product_2                   | product_3              | times_bought_together |
 |------------------------------|-----------------------------|------------------------|-----------------------|
 | Grey Fashion Jacket - Womens | Teal Button Up Shirt - Mens | White Tee Shirt - Mens | 	352                   |
