@@ -1,10 +1,17 @@
 # 🌄 Case Study #7 - Balanced Tree Clothing Co.
 ## 💳 Transaction Analysis
 ### 1. How many unique transactions were there?
+###### SQL
 
 ```TSQL
 SELECT COUNT(DISTINCT txn_id)
 FROM sales;
+```
+
+###### Python
+
+```python
+sales['txn_id'].nunique()
 ```
 
 | count  | 
@@ -14,6 +21,7 @@ FROM sales;
 ---
 
 ### 2. What is the average unique products purchased in each transaction?
+###### SQL
 
 ```TSQL
 WITH cte AS (
@@ -25,6 +33,12 @@ SELECT ROUND(AVG(prod_count),2) avg_prod_count
 FROM cte;
 ```
 
+###### Python
+
+```python
+sales.groupby('txn_id')['prod_id'].nunique().mean()
+```
+
 | avg_prod_count  | 
 |------------|
 | 6.04 |
@@ -32,6 +46,7 @@ FROM cte;
 ---
 
 ### 3. What are the 25th, 50th and 75th percentile values for the revenue per transaction?
+###### SQL
 
 ```TSQL
 WITH cte AS (
@@ -46,6 +61,25 @@ SELECT
 FROM cte;
 ```
 
+###### Python
+
+```python
+df=sales
+df['revenue_discounted'] = df.price*df.qty*(1-df.discount/100)
+df=df.groupby('txn_id', as_index=False)['revenue_discounted'].sum()
+
+q25 = df.sort_values('revenue_discounted', ascending=True)['revenue_discounted'].quantile(.25).round(2)
+median = df['revenue_discounted'].quantile(.5).round(2)
+q75 = df['revenue_discounted'].quantile(.75).round(2)
+
+data={'percentile':['25%', '50%', '75%'],
+    'number':[q25, median, q75]}
+
+df = pd.DataFrame(data)
+
+df
+```
+
 | twenty_fifth_percentile | fifth_percentile | seventy_fifth_percentile |
 |-------------------------|------------------|--------------------------|
 | 326.18                  | 441.00           | 572.75                   |
@@ -53,6 +87,7 @@ FROM cte;
 ---
 
 ### 4. What is the average discount value per transaction?
+###### SQL
 
 ```TSQL
 WITH cte AS (
@@ -66,6 +101,18 @@ SELECT ROUND(AVG(total_discount),2) avg_discount
 FROM cte;
 ```
 
+###### Python
+
+```python
+df=sales
+
+df['discounted'] = df.price*df.qty*(df.discount/100)
+
+df=df.groupby('txn_id', as_index=False)['discounted'].sum()
+
+df.discounted.mean()
+```
+
 | avg_discount | 
 |-------------------------|
 | 62.49                  |
@@ -73,6 +120,7 @@ FROM cte;
 ---
 
 ### 5. What is the percentage split of all transactions for members vs non-members?
+###### SQL
 
 ```TSQL
 WITH cte AS (
@@ -86,6 +134,18 @@ FROM cte, sales
 GROUP BY cte.member, cte.txn_count;
 ```
 
+###### Python
+
+```python
+df = sales
+
+df = df.groupby('member', as_index=False)['txn_id'].nunique()
+
+df['percentage'] = 100*df.txn_id/df.txn_id.sum()
+
+df
+```
+
 | member | txn_percentage |
 |--------|----------------|
 | false  | 39.8           |
@@ -94,6 +154,7 @@ GROUP BY cte.member, cte.txn_count;
 ---
 
 ### 6. What is the average revenue for member transactions and non-member transactions?
+###### SQL
 
 ```TSQL
 WITH cte AS (
@@ -107,6 +168,18 @@ SELECT
  AVG(revenue_per_txn) avg_revenue
 FROM cte
 GROUP BY member;
+```
+
+###### Python
+
+```python
+df=sales
+
+df['revenue_discounted'] = df.price*df.qty*(1-df.discount/100)
+
+df = df.groupby(['txn_id', 'member'], as_index=False)['revenue_discounted'].sum()
+
+df.groupby(['member'], as_index=False)['revenue_discounted'].mean()
 ```
 
 | member | avg_revenue          |
