@@ -1,6 +1,7 @@
 # 🌄 Case Study #7 - Balanced Tree Clothing Co.
 ## 👕 Product Analysis
 ### 1. What are the top 3 products by total revenue before discount?
+###### SQL
 
 ```TSQL
 WITH cte AS (
@@ -19,6 +20,20 @@ ORDER BY total_revenue DESC
 LIMIT 3;
 ```
 
+###### Python
+
+```python
+df=sales
+
+df = df.groupby('prod_id', as_index=False)['qty'].sum()
+
+df=df.merge(details, how='inner', left_on='prod_id', right_on='product_id')
+
+df['total_revenue']=df.qty*df.price
+
+df[['prod_id', 'product_name', 'total_revenue']].sort_values('total_revenue', ascending=False).head(3)
+```
+
 | prod_id | product_name                 | total_revenue |
 |---------|------------------------------|---------------|
 | 2a2353  | Blue Polo Shirt - Mens       | 217683        |
@@ -28,6 +43,7 @@ LIMIT 3;
 ---
 
 ### 2. What is the total quantity, revenue and discount for each segment?
+###### SQL
 
 ```TSQL
 SELECT
@@ -41,6 +57,17 @@ LEFT JOIN product_details pd ON s.prod_id=pd.product_id
 GROUP BY 1,2;
 ```
 
+###### Python
+
+```python
+df=sales.merge(details, how='left', left_on='prod_id', right_on='product_id')
+
+df['discount_price']=df.qty*df.price_x*(df.discount/100)
+df['revenue']=df.qty*df.price_x*(1-df.discount/100)
+
+df.groupby(['segment_id', 'segment_name']).agg({'qty':['sum'], 'discount_price':['sum'], 'revenue':['sum']})
+```
+
 | segment_id | segment_name | total_qty | total_discounts | total_revenue |
 |------------|--------------|-----------|-----------------|---------------|
 | 4	          | Jacket       | 	11385     | 44277.46        | 322705.54     |
@@ -51,6 +78,7 @@ GROUP BY 1,2;
 ---
 
 ### 3. What is the top selling product for each segment?
+###### SQL
 
 ```TSQL
 WITH cte AS (
@@ -75,6 +103,17 @@ FROM cte2
 WHERE row_n=1;
 ```
 
+###### Python
+
+```python
+df=df.groupby(['segment_id', 'segment_name', 'product_name'], as_index=False)['qty'].sum()
+
+df['rank'] = df.sort_values(['segment_id', 'qty'], ascending=[True, False])\
+                .groupby('segment_id')['qty'].rank(method='first').astype(int)
+
+df[df['rank']==3]
+```
+
 | segment_name | product_name                  | total_qty |
 |--------------|-------------------------------|-----------|
 | Jeans        | Navy Oversized Jeans - Womens | 	3856      |
@@ -85,6 +124,7 @@ WHERE row_n=1;
 ---
 
 ### 4. What is the total quantity, revenue and discount for each category?
+###### SQL
 
 ```TSQL
 SELECT
@@ -99,6 +139,17 @@ GROUP BY 1,2
 ORDER BY 1;
 ```
 
+###### Python
+
+```python
+df=sales.merge(details, how='left', left_on='prod_id', right_on='product_id')
+
+df['discount_price']=df.qty*df.price_x*(df.discount/100)
+df['revenue']=df.qty*df.price_x*(1-df.discount/100)
+
+df.groupby(['category_id', 'category_name']).agg({'qty':['sum'], 'discount_price':['sum'], 'revenue':['sum']})
+```
+
 | category_id | category_name | total_qty | total_revenue | total_discount |
 |-------------|---------------|-----------|---------------|----------------|
 | 1	           | Womens        | 	22734     | 505711.57     | 69621.43       |
@@ -107,6 +158,7 @@ ORDER BY 1;
 ---
 
 ### 5. What is the top selling product for each category?
+###### SQL
 
 ```TSQL
 WITH cte AS (
@@ -131,6 +183,17 @@ FROM cte2
 WHERE row_n=1;
 ```
 
+###### Python
+
+```python
+df=df.groupby(['category_id', 'category_name', 'product_name'], as_index=False)['qty'].sum()
+
+df['rank'] = df.sort_values(['category_id', 'qty'], ascending=[True, False])\
+               .groupby(['category_id', 'category_name'])['qty'].rank(method='first', ascending=False).astype(int)
+
+df[df['rank']==1]
+```
+
 | category_name | product_name                 | total_qty |
 |---------------|------------------------------|-----------|
 | Womens        | Grey Fashion Jacket - Womens | 	3876      |
@@ -139,6 +202,7 @@ WHERE row_n=1;
 ---
 
 ### 6. What is the percentage split of revenue by product for each segment?
+###### SQL
 
 ```TSQL
 WITH cte AS (
@@ -161,6 +225,26 @@ SELECT
 FROM cte;
 ```
 
+###### Python
+
+```python
+df=sales.merge(details, how='left', left_on='prod_id', right_on='product_id')
+
+df['revenue']=df.qty*df.price_x*(1-df.discount/100)
+
+df=df.groupby(['segment_id', 'segment_name', 'product_name'], as_index=False)['revenue'].sum()
+
+seg_revenue=df.groupby('segment_id', as_index=False)['revenue'].sum()
+
+df=df.merge(seg_revenue, on='segment_id', how='left')
+
+df['percentage']=100*df.revenue_x/df.revenue_y
+
+df=df[['segment_id', 'segment_name', 'product_name', 'revenue_x', 'percentage']]
+
+df = df.rename({'revenue_x': 'total_revenue'}, axis=1)
+```
+
 First 5 rows.
 
 | segment_id | segment_name | product_name                  | total_revenue | percentage |
@@ -174,6 +258,7 @@ First 5 rows.
 ---
 
 ### 7. What is the percentage split of revenue by segment for each category?
+###### SQL
 
 ```TSQL
 WITH cte AS (
@@ -194,6 +279,24 @@ SELECT
 FROM cte;
 ```
 
+###### Python
+
+```python
+df=sales.merge(details, how='left', left_on='prod_id', right_on='product_id')
+
+df['revenue']=df.qty*df.price_x*(1-df.discount/100)
+
+df=df.groupby(['category_id', 'category_name', 'segment_name'])['revenue'].sum().reset_index(name='total_revenue')
+
+cat_revenue=df.groupby('category_id')['total_revenue'].sum().reset_index(name='category_revenue')
+
+df=df.merge(cat_revenue, on='category_id', how='left')
+
+df['percentage']=100*df.total_revenue/df.category_revenue
+
+df[['category_id', 'category_name', 'segment_name', 'total_revenue', 'percentage']]
+```
+
 | segment_name | category_name | percentage |
 |--------------|---------------|------------|
 | Jacket       | Womens        | 	63.8       |
@@ -204,6 +307,7 @@ FROM cte;
 ---
 
 ### 8. What is the percentage split of total revenue by category?
+###### SQL
 
 ```TSQL
 WITH cte AS (
@@ -223,6 +327,20 @@ FROM cte
 GROUP BY 1,2;
 ```
 
+###### Python
+
+```python
+df=sales.merge(details, how='left', left_on='prod_id', right_on='product_id')
+
+df['revenue']=df.qty*df.price_x*(1-df.discount/100)
+
+df=df.groupby(['category_id', 'category_name'])['revenue'].sum().reset_index(name='total_revenue')
+
+df['percentage']=100*df.total_revenue/df.total_revenue.sum()
+
+df[['category_id', 'category_name', 'total_revenue', 'percentage']]
+```
+
 | category_name | category_name | percentage |
 |--------------|---------------|------------|
 | Mens          | 	627512.29       | 55.4 |
@@ -232,6 +350,8 @@ GROUP BY 1,2;
 
 ### 9. What is the total transaction “penetration” for each product? 
 (hint: penetration = number of transactions where at least 1 quantity of a product was purchased divided by total number of transactions)
+
+###### SQL
 
 ```TSQL
 SELECT
@@ -251,6 +371,22 @@ GROUP BY product_name, n_items_sold, penetration
 ORDER BY penetration DESC;
 ```
 
+###### Python
+
+```python
+total_txn = sales['txn_id'].nunique()
+
+df=sales
+
+df = df.groupby('prod_id')['txn_id'].count().reset_index(name='n_sold')
+
+df['penetration']=100*df.n_sold/total_txn
+
+df=df.merge(details, left_on='prod_id', right_on='product_id', how='left')
+
+df[['product_name', 'penetration']]
+```
+
 First 5 rows.
 
 | product_name                  | n_items_sold | penetration |
@@ -266,6 +402,8 @@ First 5 rows.
 ### 10. What is the most common combination of at least 1 quantity of any 3 products in a 1 single transaction?
 
 For this question I refered to [this](https://github.com/iweld/8-Week-SQL-Challenge/blob/main/Case%20Study%207%20-%20Balanced%20Tree/questions_and_answers.md)
+
+###### SQL
 
 ```TSQL
 -- Select the 3 item combination and the count of the amount of times items where bought together.
