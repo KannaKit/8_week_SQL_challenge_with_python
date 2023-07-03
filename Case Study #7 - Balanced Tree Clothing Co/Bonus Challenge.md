@@ -5,6 +5,8 @@ Use a single SQL query to transform the `product_hierarchy` and `product_prices`
 
 Hint: you may want to consider using a recursive CTE to solve this problem!
 
+###### SQL
+
 ```TSQL
 DROP TABLE IF EXISTS rec_proj_category;
 CREATE TEMP TABLE rec_proj_category AS (
@@ -55,6 +57,35 @@ CREATE TABLE recreated_product_details AS (
   JOIN pivot_prod_hierarchy pph ON pp.id = pph.style_id);
   
 SELECT * FROM recreated_product_details;
+```
+
+###### Python
+
+```python
+# prepare 3 dfs
+cat_df = hier[hier['parent_id'].isna()]
+seg_df = hier[hier['id'].isin([3,4,5,6])]
+sty_df = hier[hier['id']>=7]
+
+# merge tables
+merged_df = sty_df[['id', 'parent_id', 'level_text']].merge(seg_df[['id',  'parent_id', 'level_text']], how='left', left_on='parent_id', right_on='id')
+merged_df = merged_df.rename(columns={'id_x':'style_id', 'level_text_x':'style_name', 'id_y':'segment_id', 'level_text_y':'segment_name'})
+merged_df = merged_df.merge(cat_df[['id', 'level_text']], how='left', left_on='parent_id_y', right_on='id')
+merged_df = merged_df.rename(columns={'id':'category_id', 'level_text':'category_name'})
+# get rid of parent_id columns
+merged_df=merged_df.loc[:, ~merged_df.columns.isin(['parent_id_x', 'parent_id_y'])]
+
+# merge table with prices table
+merged_df = merged_df.merge(prices, how='left', left_on='style_id', right_on='id')
+# get rid of id column from prices df
+merged_df=merged_df.loc[:, merged_df.columns!='id']
+
+# add a product_name column
+merged_df['product_name']=merged_df.style_name + ' ' + merged_df.segment_name + ' - ' + merged_df.category_name
+
+# adujust the order of columns
+details_recreated = merged_df[['product_id', 'price', 'product_name', 'category_id', 'segment_id', 'style_id', 'category_name', 'segment_name', 'style_name']]
+details_recreated
 ```
 
 First 5 rows.
