@@ -428,18 +428,34 @@ ORDER BY 1;
 ###### Python
 
 ```python
-runners_reg = runners
+cat_df=df.merge(details, how='left', left_on='prod_id', right_on='product_id')
 
-# extract week number from registration_date column
-runners_reg['week_n'] = runners_reg['registration_date'].dt.week
+cat_df['discount_price']=cat_df.qty*cat_df.price_x*(cat_df.discount/100)
+cat_df['revenue']=cat_df.qty*cat_df.price_x*(1-cat_df.discount/100)
 
-# replace 53rd week to week 0
-runners_reg['week_n'] = runners_reg['week_n'].replace(53, 0)
+cat_df = cat_df.groupby(['category_id', 'category_name'])\
+         .agg(total_qty=('qty', 'sum'), total_discount=('discount_price', 'sum'), total_revenue=('revenue', 'sum'))\
+         .reset_index()
 
-# group by week_n
-runners_reg = runners_reg.groupby('week_n')['runner_id'].count()
 
-runners_reg
+cat_df2=df.merge(details, how='left', left_on='prod_id', right_on='product_id')
+
+cat_df2=cat_df2.groupby(['category_id', 'category_name', 'product_name'], as_index=False)['qty'].sum()
+
+cat_df2['rank'] = cat_df2.sort_values(['category_id', 'qty'], ascending=[True, False])\
+               .groupby(['category_id', 'category_name'])['qty'].rank(method='first', ascending=False).astype(int)
+
+cat_df2=cat_df2[cat_df2['rank']==1]
+
+cat_df2=cat_df2.loc[:, cat_df2.columns != 'rank']
+
+merged_df = cat_df.merge(cat_df2, how='inner', on=['category_id', 'category_name'])
+
+total_rev = merged_df['total_revenue'].sum()
+
+merged_df['percentage_by_cat']=merged_df.total_revenue/total_rev*100
+
+merged_df
 ```
 
 | category_id | category_name | total_qty | total_revenue | total_discount | top_selling_product          | top_selling_product_qty | percentage_split_of_revenue |
@@ -496,18 +512,34 @@ LEFT JOIN tmp_tbl6 ON cte.product_name = tmp_tbl6.product_name;
 ###### Python
 
 ```python
-runners_reg = runners
+cat_df=df.merge(details, how='left', left_on='prod_id', right_on='product_id')
 
-# extract week number from registration_date column
-runners_reg['week_n'] = runners_reg['registration_date'].dt.week
+cat_df['discount_price']=cat_df.qty*cat_df.price_x*(cat_df.discount/100)
+cat_df['revenue']=cat_df.qty*cat_df.price_x*(1-cat_df.discount/100)
 
-# replace 53rd week to week 0
-runners_reg['week_n'] = runners_reg['week_n'].replace(53, 0)
+cat_df = cat_df.groupby(['category_id', 'category_name'])\
+         .agg(total_qty=('qty', 'sum'), total_discount=('discount_price', 'sum'), total_revenue=('revenue', 'sum'))\
+         .reset_index()
 
-# group by week_n
-runners_reg = runners_reg.groupby('week_n')['runner_id'].count()
 
-runners_reg
+cat_df2=df.merge(details, how='left', left_on='prod_id', right_on='product_id')
+
+cat_df2=cat_df2.groupby(['category_id', 'category_name', 'product_name'], as_index=False)['qty'].sum()
+
+cat_df2['rank'] = cat_df2.sort_values(['category_id', 'qty'], ascending=[True, False])\
+               .groupby(['category_id', 'category_name'])['qty'].rank(method='first', ascending=False).astype(int)
+
+cat_df2=cat_df2[cat_df2['rank']==1]
+
+cat_df2=cat_df2.loc[:, cat_df2.columns != 'rank']
+
+merged_df = cat_df.merge(cat_df2, how='inner', on=['category_id', 'category_name'])
+
+total_rev = merged_df['total_revenue'].sum()
+
+merged_df['percentage_by_cat']=merged_df.total_revenue/total_rev*100
+
+merged_df
 ```
 
 | segment_id | segment_name | product_name                  | total_revenue | percentage | n_items_sold | penetration_percentage |
@@ -558,18 +590,54 @@ WHERE RANK = 1;
 ###### Python
 
 ```python
-runners_reg = runners
+# list up all possible combinations of product_id
+combinations = list(itertools.combinations(details.product_id, 3))
 
-# extract week number from registration_date column
-runners_reg['week_n'] = runners_reg['registration_date'].dt.week
+# make the result a dataframe
+all_combo = pd.DataFrame(combinations)
+# change column names
+all_combo.columns=['prod1', 'prod2', 'prod3']
 
-# replace 53rd week to week 0
-runners_reg['week_n'] = runners_reg['week_n'].replace(53, 0)
+top3_df=df
 
-# group by week_n
-runners_reg = runners_reg.groupby('week_n')['runner_id'].count()
+# find what was purchased together
+top3_df['bought_together']=top3_df.groupby('txn_id')['prod_id'].transform(lambda x: ', '.join(x))
 
-runners_reg
+top3_df=top3_df.drop_duplicates(subset=['txn_id'])
+
+# filter out single product order and 2 products order
+# count comma, 2 commas mean there are 3 items bought together
+top3_df['comma_count']=top3_df.bought_together.str.count(', ')
+top3_df=top3_df[df['comma_count']>=2]
+
+#keep only relavent column
+top3_df=top3_df[['bought_together']]
+
+matching_combinations = {}
+
+for i in all_combo.index:
+    combination = (all_combo['prod1'].iloc[i], all_combo['prod2'].iloc[i], all_combo['prod3'].iloc[i])
+    matching_rows = top3_df['bought_together'].str.contains(combination[0]) & top3_df['bought_together'].str.contains(combination[1]) & top3_df['bought_together'].str.contains(combination[2])
+    count = matching_rows.sum()
+    matching_combinations[combination] = count
+
+# Convert the matching_combinations dictionary to a DataFrame
+result_df = pd.DataFrame(list(matching_combinations.items()), columns=['Combination', 'Match Count'])
+
+# Sort the DataFrame by 'Match Count' column in descending order
+result_df = result_df.sort_values(by='Match Count', ascending=False)
+
+# Get the most matched combination
+most_matched_combination = result_df.iloc[0, 0]
+
+# Create a new DataFrame with the values in separate columns
+most_matched_df = pd.DataFrame([most_matched_combination], columns=['Product1', 'Product2', 'Product3'])
+
+most_matched_df = most_matched_df.merge(details, how='inner', left_on='Product1', right_on='product_id')
+most_matched_df = most_matched_df.merge(details, how='inner', left_on='Product2', right_on='product_id')
+most_matched_df = most_matched_df.merge(details, how='inner', left_on='Product3', right_on='product_id')
+
+most_matched_df[['product_name_x', 'product_name_y', 'product_name']]
 ```
 
 | product_1                    | product_2                   | product_3              | times_bought_together |
