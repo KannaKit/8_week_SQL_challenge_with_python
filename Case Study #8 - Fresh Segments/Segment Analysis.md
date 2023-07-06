@@ -1,6 +1,7 @@
 # 🍊 Case Study #8 - Fresh Segments
 ## 👩‍💻 Segment Analysis
 ### 1. Using our filtered dataset by removing the interests with less than 6 months worth of data, which are the top 10 and bottom 10 interests which have the largest composition values in any `month_year`? Only use the maximum composition value for each interest but you must keep the corresponding `month_year`
+###### SQL
 
 ```TSQL
 --top 10 interests
@@ -28,6 +29,18 @@ WHERE rank < 11
 ORDER BY 3;
 ```
 
+###### Python
+
+```python
+max_compo_df = removed_df[~removed_df['month_year'].isna()].groupby('interest_id')['composition'].max().reset_index(name='max_composition')
+max_compo_df = max_compo_df.sort_values('max_composition', ascending=False).head(10)
+
+merged_df = max_compo_df.merge(removed_df[['interest_id', 'month_year', 'composition']], how='left', left_on=['interest_id', 'max_composition'], right_on=['interest_id', 'composition'])
+merged_df = merged_df[['month_year', 'interest_id', 'composition']].merge(i_map, how='left', left_on='interest_id', right_on='id')
+
+merged_df[['month_year', 'interest_id', 'interest_name', 'interest_summary', 'composition']]
+```
+
 First 5 rows. 
 
 | interest_id | interest_name                     | rank |
@@ -37,6 +50,8 @@ First 5 rows.
 | 39	          | Furniture Shoppers                | 	3    |
 | 77	          | Luxury Retail Shoppers            | 	4    |
 | 12133	       | Luxury Boutique Hotel Researchers | 	5    |
+
+###### SQL
 
 ```TSQL
 --bottom 10 interests
@@ -64,6 +79,18 @@ ORDER BY 3 DESC
 LIMIT 10;
 ```
 
+###### Python
+
+```python
+min_compo_df = removed_df[~removed_df['month_year'].isna()].groupby('interest_id')['composition'].max().reset_index(name='max_composition')
+min_compo_df = min_compo_df.sort_values('max_composition', ascending=False).tail(10)
+
+merged_df = min_compo_df.merge(removed_df[['interest_id', 'month_year', 'composition']], how='left', left_on=['interest_id', 'max_composition'], right_on=['interest_id', 'composition'])
+merged_df = merged_df[['month_year', 'interest_id', 'composition']].merge(i_map, how='left', left_on='interest_id', right_on='id')
+
+merged_df[['month_year', 'interest_id', 'interest_name', 'interest_summary', 'composition']]
+```
+
 First 5 rows. 
 
 | interest_id | interest_name                | rank |
@@ -77,6 +104,7 @@ First 5 rows.
 ---
 
 ### 2. Which 5 interests had the lowest average `ranking` value?
+###### SQL
 
 ```TSQL
 SELECT 
@@ -90,6 +118,18 @@ ORDER BY avg_rank DESC
 LIMIT 5;
 ```
 
+###### Python
+
+```python
+avg_rank_df = removed_df.groupby('interest_id')['ranking'].mean().reset_index(name='avg_rank')
+
+avg_rank_df = avg_rank_df.sort_values('avg_rank', ascending=False).head(5)
+
+avg_rank_df = avg_rank_df.merge(i_map, how='left', left_on='interest_id', right_on='id')
+
+avg_rank_df
+```
+
 | interest_id | interest_name                                      | avg_rank |
 |-------------|----------------------------------------------------|----------|
 | 42011	       | League of Legends Video Game Fans                  | 	1037.3   |
@@ -101,6 +141,7 @@ LIMIT 5;
 ---
 
 ### 3. Which 5 interests had the largest standard deviation in their `percentile_ranking` value?
+###### SQL
 
 ```TSQL
 SELECT 
@@ -114,6 +155,17 @@ ORDER BY std_percentile_ranking DESC
 LIMIT 5;
 ```
 
+###### Python
+
+```python
+std_df = removed_df.groupby('interest_id')['percentile_ranking'].std().reset_index(name='std_pct_rnk')
+std_df = std_df.sort_values('std_pct_rnk', ascending=False).head(5)
+
+std_df = std_df.merge(i_map, how='left', left_on='interest_id', right_on='id')
+
+std_df
+```
+
 | interest_id | interest_name                          | std_percentile_ranking |
 |-------------|----------------------------------------|------------------------|
 | 23	          | Techies                                | 	30.18                  |
@@ -125,6 +177,7 @@ LIMIT 5;
 ---
 
 ### 4. For the 5 interests found in the previous question - what was minimum and maximum `percentile_ranking` values for each interest and its corresponding `year_month` value? Can you describe what is happening for these 5 interests?
+###### SQL
 
 ```TSQL
 --Minimum
@@ -168,6 +221,7 @@ GROUP BY 1,2)
 | 20764	       | Entertainment Industry Decision Makers | 	11.23	        | 2019-08-01 |
 | 23	          | Techies                                | 	7.92	         | 2019-08-01 |
 
+###### SQL
 
 ```TSQL
 --Max
@@ -214,6 +268,24 @@ SELECT
 FROM min_temp_tbl mtt
 JOIN cte3 ON mtt.interest_id=cte3.interest_id
 LEFT JOIN interest_map map ON mtt.interest_id=map.id;
+```
+
+###### Python
+
+```python
+merged_df = std_df.merge(removed_df, how='left', on='interest_id')
+
+merged_df = merged_df.groupby(['interest_id', 'interest_name', 'interest_summary']).agg(min_pct_rnk=('percentile_ranking', 'min'),
+                                                                                        max_pct_rnk=('percentile_ranking', 'max'))
+
+merged_df = merged_df.merge(removed_df[['percentile_ranking', 'interest_id', 'month_year']], how='left', left_on=['interest_id', 'min_pct_rnk'], right_on=['interest_id', 'percentile_ranking'])
+merged_df = merged_df.rename(columns={'month_year':'min_pct_rnk_month_year'})
+
+merged_df = merged_df.merge(removed_df[['percentile_ranking', 'interest_id', 'month_year']], how='left', left_on=['interest_id', 'max_pct_rnk'], right_on=['interest_id', 'percentile_ranking'])
+merged_df = merged_df.rename(columns={'month_year':'max_pct_rnk_month_year'})
+
+merged_df = merged_df.merge(i_map, how='left', left_on='interest_id', right_on='id')
+merged_df[['interest_id', 'interest_name', 'interest_summary', 'min_pct_rnk', 'min_pct_rnk_month_year', 'max_pct_rnk', 'max_pct_rnk_month_year']]
 ```
 
 | interest_id | interest_name                          | interest_summary                                                                                                                                                        | min_pct_rank | month_year | max_pct_rank | month_year |
