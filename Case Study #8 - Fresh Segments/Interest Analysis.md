@@ -1,6 +1,7 @@
 # 🍊 Case Study #8 - Fresh Segments
 ## 💹 Interest Analysis
 ### 1. Which interests have been present in all `month_year` dates in our dataset?
+###### SQL
 
 ```TSQL
 --Find how many unique month_year dates in our dataset
@@ -22,6 +23,20 @@ FROM cte2
 LEFT JOIN interest_map map ON cte2.interest_id=map.id;
 ```
 
+###### Python
+
+```python
+# Find how many unique month_year dates in our dataset
+all_month = df['month_year'].nunique()
+
+df2 = df[~df['month_year'].isna()]
+df2 = df2.groupby('interest_id', as_index=False)['month_year'].nunique()
+
+df2 = df2[df2['month_year']==all_month].merge(i_map, how='left', left_on='interest_id', right_on='id')
+
+df2[['interest_id', 'interest_name', 'interest_summary']]
+```
+
 First 5 rows.
 
 | interest_id | interest_name             | interest_summary                                                                   |
@@ -35,6 +50,7 @@ First 5 rows.
 ---
 
 ### 2. Using this same `total_months` measure - calculate the cumulative percentage of all records starting at 14 months - which `total_months` value passes the 90% cumulative percentage value?
+###### SQL
 
 ```TSQL
 WITH cte AS (
@@ -62,6 +78,22 @@ FROM cte3
 WHERE cumulative_pct > 90.0;
 ```
 
+###### Python
+
+```python
+df2 = df[~df['month_year'].isna()]
+df2 = df2.groupby('interest_id')['month_year'].nunique().reset_index(name='count_month_year')
+
+df2 = df2.groupby('count_month_year')['interest_id'].count().reset_index(name='interest_id_n')
+
+total_int_id = sum(df2.interest_id_n)
+
+df2['cumulative_sum'] = df2.loc[::-1, 'interest_id_n'].cumsum()[::-1]
+df2['cumulative_pct'] = df2.cumulative_sum/total_int_id*100
+
+df2[df2['cumulative_pct']>90]
+```
+
 | count_month_year | interests | cumulative_pct |
 |------------------|-----------|----------------|
 | 6                | 33        | 90.8           |
@@ -74,6 +106,7 @@ WHERE cumulative_pct > 90.0;
 ---
 
 ### 3. If we were to remove all `interest_id` values which are lower than the `total_months` value we found in the previous question - how many total data points would we be removing?
+###### SQL
 
 ```TSQL
 WITH cte AS (
@@ -87,6 +120,23 @@ GROUP BY interest_id)
 SELECT COUNT(DISTINCT interest_id) unique_interest_id_count, COUNT(interest_id) interest_id_count
 FROM interest_metrics
 WHERE interest_id IN (SELECT interest_id FROM cte WHERE count_month_year < 6);
+```
+
+###### Python
+
+```python
+df3 = df[~df['month_year'].isna()]
+df3 = df3.groupby('interest_id')['month_year'].nunique().reset_index(name='count_month_year')
+
+df3 = df3[df3['count_month_year']<6]
+
+unique_id = df3.interest_id.nunique()
+
+merged_df = df.merge(df3, how='right')
+data_points = merged_df.interest_id.count()
+
+print('Unique interest_id count:', unique_id)
+print('Removing data points:', data_points)
 ```
 
 | unique_interest_id_count | interest_id_count | 
@@ -105,6 +155,7 @@ If we were to remove all `interest_id values` which are lower than the `total_mo
 ---
 
 ### 5. After removing these interests - how many unique interests are there for each month?
+###### SQL
 
 ```TSQL
 --Create a temporary table
@@ -131,6 +182,13 @@ FROM interest_met_temp
 WHERE month_year IS NOT NULL
 GROUP BY 1
 ORDER BY 1;
+```
+
+###### Python
+
+```python
+removed_df = df[~df['interest_id'].isin(df3.interest_id)]
+removed_df.groupby('month_year')['interest_id'].nunique()
 ```
 
 First 5 rows. 
