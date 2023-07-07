@@ -40,7 +40,7 @@ The following case study questions include some general data exploration analysi
 4. How many days on average are customers reallocated to a different node?
 5. What is the median, 80th and 95th percentile for this same reallocation days metric for each region?  
 
-▶️ **Check my solution [HERE](https://github.com/KannaKit/8_Week_SQL_Challenge/blob/main/Case%20Study%20%234%20-%20Data%20Bank/A.%20Customer%20Nodes%20Exploration.md)** 
+▶️ **Check my solution [HERE](https://github.com/KannaKit/8_week_SQL_challenge_with_python/blob/main/Case%20Study%20%234%20-%20Data%20Bank/A.%20Customer%20Nodes%20Exploration.md)** 
 
   ---
   
@@ -52,7 +52,7 @@ The following case study questions include some general data exploration analysi
   4. What is the closing balance for each customer at the end of the month?
   5. What is the percentage of customers who increase their closing balance by more than 5%?
 
-▶️ **Check my solution [HERE](https://github.com/KannaKit/8_Week_SQL_Challenge/blob/main/Case%20Study%20%234%20-%20Data%20Bank/B.%20Customer%20Transactions.md)** 
+▶️ **Check my solution [HERE](https://github.com/KannaKit/8_week_SQL_challenge_with_python/blob/main/Case%20Study%20%234%20-%20Data%20Bank/B.%20Customer%20Transactions.md)** 
   
 ---
   
@@ -72,7 +72,7 @@ For this multi-part challenge question - you have been requested to generate the
 
 Using all of the data available - how much data would have been required for each option on a monthly basis?
   
-▶️ **Check my solution [HERE](https://github.com/KannaKit/8_Week_SQL_Challenge/blob/main/Case%20Study%20%234%20-%20Data%20Bank/C.%20Data%20Allocation%20Challenge.md)**   
+▶️ **Check my solution [HERE](https://github.com/KannaKit/8_week_SQL_challenge_with_python/blob/main/Case%20Study%20%234%20-%20Data%20Bank/C.%20Data%20Allocation%20Challenge.md)**   
   
 ---
   
@@ -87,7 +87,7 @@ Special notes:
 * Data Bank wants an initial calculation which does not allow for compounding interest, however they may also be interested in a daily compounding interest calculation so you can try to perform this calculation if you have the stamina!
 
 
-▶️ **Check my solution [HERE](https://github.com/KannaKit/8_Week_SQL_Challenge/blob/main/Case%20Study%20%234%20-%20Data%20Bank/D.%20Extra%20Challenge.md)**
+▶️ **Check my solution [HERE](https://github.com/KannaKit/8_week_SQL_challenge_with_python/blob/main/Case%20Study%20%234%20-%20Data%20Bank/D.%20Extra%20Challenge.md)**
 
 ---
   
@@ -97,7 +97,7 @@ The Data Bank team wants you to use the outputs generated from the above section
 
 * Using the outputs generated from the customer node questions, generate a few headline insights which Data Bank might use to market it’s world-leading security features to potential investors and customers.
 
-▶️ **Check my solution [HERE](https://github.com/KannaKit/8_Week_SQL_Challenge/blob/main/Case%20Study%20%234%20-%20Data%20Bank/Extension%20Request.md)**
+▶️ **Check my solution [HERE](https://github.com/KannaKit/8_week_SQL_challenge_with_python/blob/main/Case%20Study%20%234%20-%20Data%20Bank/E.%20Extension%20Request.md)**
   
  --- 
   
