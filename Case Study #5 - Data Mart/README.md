@@ -59,7 +59,7 @@ In a single query, perform the following operations and generate a new table in 
 * Ensure all `null` string values with an `"unknown"` string value in the original `segment` column as well as the new `age_band` and `demographic` columns
 * Generate a new `avg_transaction` column as the `sales` value divided by `transactions` rounded to 2 decimal places for each record  
 
-▶️ **Check my solution [HERE](https://github.com/KannaKit/8_Week_SQL_Challenge/blob/main/Case%20Study%20%235%20-%20Data%20Mart/1.%20Data%20Cleaning%20Steps.md)** 
+▶️ **Check my solution [HERE](https://github.com/KannaKit/8_week_SQL_challenge_with_python/blob/main/Case%20Study%20%235%20-%20Data%20Mart/1.%20Data%20Cleaning%20Steps.md)** 
 
   ---
   
@@ -75,7 +75,7 @@ In a single query, perform the following operations and generate a new table in 
   8. Which `age_band` and `demographic` values contribute the most to Retail sales?
   9. Can we use the `avg_transaction` column to find the average transaction size for each year for Retail vs Shopify? If not - how would you calculate it instead?
 
-▶️ **Check my solution [HERE](https://github.com/KannaKit/8_Week_SQL_Challenge/blob/main/Case%20Study%20%235%20-%20Data%20Mart/2.%20Data%20Exploration.md)** 
+▶️ **Check my solution [HERE](https://github.com/KannaKit/8_week_SQL_challenge_with_python/blob/main/Case%20Study%20%235%20-%20Data%20Mart/2.%20Data%20Exploration.md)** 
   
 ---
   
@@ -93,7 +93,7 @@ Using this analysis approach - answer the following questions:
   2. What about the entire 12 weeks before and after?
   3. How do the sale metrics for these 2 periods before and after compare with the previous years in 2018 and 2019?
   
-▶️ **Check my solution [HERE](https://github.com/KannaKit/8_Week_SQL_Challenge/blob/main/Case%20Study%20%235%20-%20Data%20Mart/3.%20Before%20%26%20After%20Analysis.md)**   
+▶️ **Check my solution [HERE](https://github.com/KannaKit/8_week_SQL_challenge_with_python/blob/main/Case%20Study%20%235%20-%20Data%20Mart/3.%20Before%20%26%20After%20Analysis.md)**   
   
 ---
   
@@ -109,7 +109,7 @@ Which areas of the business have the highest negative impact in sales metrics pe
 
 Do you have any further recommendations for Danny’s team at Data Mart or any interesting insights based off this analysis?
 
-▶️ **Check my solution [HERE](https://github.com/KannaKit/8_Week_SQL_Challenge/blob/main/Case%20Study%20%235%20-%20Data%20Mart/4.%20Bonus%20Question.md)**
+▶️ **Check my solution [HERE](https://github.com/KannaKit/8_week_SQL_challenge_with_python/blob/main/Case%20Study%20%235%20-%20Data%20Mart/4.%20Bonus%20Question.md)**
 
 ---
   
