@@ -34,7 +34,7 @@ Using the DDL schema details to create an ERD for all the Clique Bait datasets.
   8. What is the number of views and cart adds for each product category?
   9. What are the top 3 products by purchases?
 
-▶️ **Check my solution [HERE](https://github.com/KannaKit/8_Week_SQL_Challenge/blob/main/Case%20Study%20%236%20-%20Clique%20Bait/2.%20Digital%20Analysis.md)** 
+▶️ **Check my solution [HERE](https://github.com/KannaKit/8_week_SQL_challenge_with_python/blob/main/Case%20Study%20%236%20-%20Clique%20Bait/2.%20Digital%20Analysis.md)** 
   
 ---
   
@@ -57,7 +57,7 @@ Use your 2 new output tables - answer the following questions:
   4. What is the average conversion rate from view to cart add?
   5. What is the average conversion rate from cart add to purchase?
   
-▶️ **Check my solution [HERE](https://github.com/KannaKit/8_Week_SQL_Challenge/blob/main/Case%20Study%20%236%20-%20Clique%20Bait/3.%20Product%20Funnel%20Analysis.md)**   
+▶️ **Check my solution [HERE](https://github.com/KannaKit/8_week_SQL_challenge_with_python/blob/main/Case%20Study%20%236%20-%20Clique%20Bait/3.%20Product%20Funnel%20Analysis.md)**   
   
 ---
   
@@ -85,7 +85,7 @@ Some ideas you might want to investigate further include:
 * What is the uplift in purchase rate when comparing users who click on a campaign impression versus users who do not receive an impression? What if we compare them with users who just an impression but do not click?
 * What metrics can you use to quantify the success or failure of each campaign compared to eachother?
 
-▶️ **Check my solution [HERE](https://github.com/KannaKit/8_Week_SQL_Challenge/blob/main/Case%20Study%20%236%20-%20Clique%20Bait/4.%20Campaigns%20Analysis.md)**
+▶️ **Check my solution [HERE](https://github.com/KannaKit/8_week_SQL_challenge_with_python/blob/main/Case%20Study%20%236%20-%20Clique%20Bait/4.%20Campaigns%20Analysis.md)**
 
 ---
   
