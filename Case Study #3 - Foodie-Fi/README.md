@@ -30,7 +30,7 @@ Based off the 8 sample customers provided in the sample from the `subscriptions`
 
 Try to keep it as short as possible - you may also want to run some sort of join to make your explanations a bit easier!
 
-▶️ **Check my solution [HERE](https://github.com/KannaKit/8_Week_SQL_Challenge/blob/main/Case%20Study%20%233%20-%20Foodie-Fi/A.%20Customer%20Journey.md)** 
+▶️ **Check my solution [HERE](https://github.com/KannaKit/8_week_SQL_challenge_with_python/blob/main/Case%20Study%20%233%20-%20Foodie-Fi/A.%20Customer%20Journey.md)** 
 
   ---
   
@@ -48,7 +48,7 @@ Try to keep it as short as possible - you may also want to run some sort of join
 10. Can you further breakdown this average value into 30 day periods (i.e. 0–30 days, 31–60 days etc)
 11. How many customers downgraded from a pro monthly to a basic monthly plan in 2020?
   
-▶️ **Check my solution [HERE](https://github.com/KannaKit/8_Week_SQL_Challenge/blob/main/Case%20Study%20%233%20-%20Foodie-Fi/B.%20Data%20Analysis%20Questions.md)** 
+▶️ **Check my solution [HERE](https://github.com/KannaKit/8_week_SQL_challenge_with_python/blob/main/Case%20Study%20%233%20-%20Foodie-Fi/B.%20Data%20Analysis%20Questions.md)** 
   
 ---
   
@@ -74,7 +74,7 @@ Example outputs for this table might look like the following (first 8 rows):
 | 13          | 1       | basic monthly | 2020-12-22   | 9.90   | 1             |
 | 15          | 2       | pro monthly   | 2020-03-24   | 19.90  | 1             |
   
-▶️ **Check my solution [HERE](https://github.com/KannaKit/8_Week_SQL_Challenge/blob/main/Case%20Study%20%233%20-%20Foodie-Fi/C.%20Challenge%20Payment%20Question.md)**   
+▶️ **Check my solution [HERE](https://github.com/KannaKit/8_week_SQL_challenge_with_python/blob/main/Case%20Study%20%233%20-%20Foodie-Fi/C.%20Challenge%20Payment%20Question.md)**   
   
 ---
   
@@ -86,7 +86,7 @@ Example outputs for this table might look like the following (first 8 rows):
   4. If the Foodie-Fi team were to create an exit survey shown to customers who wish to cancel their subscription, what questions would you include in the survey?
   5. What business levers could the Foodie-Fi team use to reduce the customer churn rate? How would you validate the effectiveness of your ideas?
 
-▶️ **Check my solution [HERE](https://github.com/KannaKit/8_Week_SQL_Challenge/blob/main/Case%20Study%20%233%20-%20Foodie-Fi/D.%20Outside%20The%20Box%20Questions.md)**
+▶️ **Check my solution [HERE](https://github.com/KannaKit/8_week_SQL_challenge_with_python/blob/main/Case%20Study%20%233%20-%20Foodie-Fi/D.%20Outside%20The%20Box%20Questions.md)**
 
 ---
   
