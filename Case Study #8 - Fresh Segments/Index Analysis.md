@@ -6,6 +6,7 @@ The `index_value` is a measure which can be used to reverse calculate the averag
 Average composition can be calculated by dividing the composition column by the `index_value` column rounded to 2 decimal places.
 
 ### 1. What is the top 10 interests by the average composition for each month?
+###### SQL
 
 ```TSQL
 WITH cte AS (
@@ -31,6 +32,22 @@ WHERE rank_n <= 10
 ORDER BY month_year, rank_n;
 ```
 
+###### Python
+
+```python
+df=met[~met['month_year'].isna()]
+
+df['avg_composition']=(df.composition/df.index_value).round(2)
+
+df['rank_n']=df.groupby('month_year')['avg_composition'].rank('first', ascending=False)
+
+merged_df = df[df['rank_n']<=10].merge(i_map, how='left', left_on='interest_id', right_on='id')
+
+merged_df=merged_df[['month_year', 'interest_id', 'interest_name', 'interest_summary', 'avg_composition']].sort_values(['month_year', 'avg_composition'], ascending=[True, False])
+
+merged_df
+```
+
 First 5 rows.
 
 | month_year | interest_id | interest_name                 | interest_summary                                                                                                                                          | avg_composition |
@@ -44,6 +61,7 @@ First 5 rows.
 ---
 
 ### 2. For all of these top 10 interests - which interest appears the most often?
+###### SQL
 
 ```TSQL
 WITH cte AS (
@@ -86,6 +104,16 @@ WHERE interest_id_count=10
 GROUP BY interest_id_count, interest_name, interest_summary;
 ```
 
+###### Python
+
+```python
+count_df=merged_df.groupby(['interest_id', 'interest_name', 'interest_summary'])['interest_id'].count().reset_index(name='interest_id_count')
+
+max_count = count_df.interest_id_count.max()
+
+count_df[count_df['interest_id_count']==max_count]
+```
+
 | interest_id_count | interest_name            | interest_summary                                                                                                                                        |
 |-------------------|--------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
 | 10	                | Alabama Trip Planners    | People researching attractions and accommodations in Alabama. These consumers are more likely to spend money on flights, hotels, and local attractions. |
@@ -95,6 +123,7 @@ GROUP BY interest_id_count, interest_name, interest_summary;
 ---
 
 ### 3. What is the average of the average composition for the top 10 interests for each month?
+###### SQL
 
 ```TSQL
 WITH cte AS (
@@ -127,6 +156,12 @@ GROUP BY month_year
 ORDER BY 1;
 ```
 
+###### Python
+
+```python
+merged_df.groupby('month_year')['avg_composition'].mean()
+```
+
 | month_year | avg_avg_composition |
 |------------|---------------------|
 | 2018-07-01 | 	6.04                |
@@ -138,6 +173,7 @@ ORDER BY 1;
 ---
 
 ### 4. What is the 3 month rolling average of the max average composition value from September 2018 to August 2019 and include the previous top ranking interests in the same output shown below.
+###### SQL
 
 ```TSQL
 WITH cte AS (
@@ -174,6 +210,32 @@ SELECT *
 FROM cte4
 WHERE month_year > '2018-08-01';
 ```
+
+###### Python
+
+```python
+df=met[~met['month_year'].isna()]
+
+df['avg_composition']=(df.composition/df.index_value).round(2)
+
+max_avg_compo_df = df.groupby('month_year')['avg_composition'].max().reset_index(name='max_avg_compo')
+
+merged_df = df.merge(max_avg_compo_df, how='right', left_on=['month_year', 'avg_composition'], right_on=['month_year', 'max_avg_compo'])
+
+merged_df = merged_df.sort_values('month_year')
+
+merged_df['rolling_avg'] = merged_df['max_avg_compo'].rolling(window=3, min_periods=1).mean().round(2)
+merged_df = merged_df.merge(i_map, how='left', left_on='interest_id', right_on='id')
+
+result = merged_df[['month_year', 'interest_name', 'max_avg_compo', 'rolling_avg']]
+
+result['one_month_ago'] = result['interest_name'].shift(1) + ': ' + result['max_avg_compo'].shift(1).astype(str)
+result['three_month_ago'] = result['interest_name'].shift(2) + ': ' + result['max_avg_compo'].shift(2).astype(str)
+
+result[result['month_year']>'2018-08-01']
+```
+
+First 5 rows.
 
 | month_year | interest_name              | max_index_composition | three_month_moving_avg | one_month_ago                    | three_month_ago                  |
 |------------|----------------------------|-----------------------|------------------------|----------------------------------|----------------------------------|
