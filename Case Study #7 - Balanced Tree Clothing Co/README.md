@@ -27,7 +27,7 @@ Each question can be answered using a single query - but as you are writing the 
   2. What is the total generated revenue for all products before discounts?
   3. What was the total discount amount for all products?
 
-▶️ **Check my solution [HERE](https://github.com/KannaKit/8_Week_SQL_Challenge/blob/main/Case%20Study%20%237%20-%20Balanced%20Tree%20Clothing%20Co/High%20Level%20Sales%20Analysis.md)** 
+▶️ **Check my solution [HERE](https://github.com/KannaKit/8_week_SQL_challenge_with_python/blob/main/Case%20Study%20%237%20-%20Balanced%20Tree%20Clothing%20Co/A.%20High%20Level%20Sales%20Analysis.md)** 
   
 ---
   
@@ -40,7 +40,7 @@ Each question can be answered using a single query - but as you are writing the 
   5. What is the percentage split of all transactions for members vs non-members?
   6. What is the average revenue for member transactions and non-member transactions?
   
-▶️ **Check my solution [HERE](https://github.com/KannaKit/8_Week_SQL_Challenge/blob/main/Case%20Study%20%237%20-%20Balanced%20Tree%20Clothing%20Co/Transaction%20Analysis.md)**   
+▶️ **Check my solution [HERE](https://github.com/KannaKit/8_week_SQL_challenge_with_python/blob/main/Case%20Study%20%237%20-%20Balanced%20Tree%20Clothing%20Co/B.%20Transaction%20Analysis.md)**   
   
 ---
   
@@ -57,7 +57,7 @@ Each question can be answered using a single query - but as you are writing the 
   9. What is the total transaction “penetration” for each product? (hint: penetration = number of transactions where at least 1 quantity of a product was purchased divided by total number of transactions)
   10. What is the most common combination of at least 1 quantity of any 3 products in a 1 single transaction?
 
-▶️ **Check my solution [HERE](https://github.com/KannaKit/8_Week_SQL_Challenge/blob/main/Case%20Study%20%237%20-%20Balanced%20Tree%20Clothing%20Co/Product%20Analysis.md)**
+▶️ **Check my solution [HERE](https://github.com/KannaKit/8_week_SQL_challenge_with_python/blob/main/Case%20Study%20%237%20-%20Balanced%20Tree%20Clothing%20Co/C.%20Product%20Analysis.md)**
 
 ---
 
@@ -71,7 +71,7 @@ He first wants you to generate the data for January only - but then he also want
 
 Feel free to split up your final outputs into as many tables as you need - but be sure to explicitly reference which table outputs relate to which question for full marks :)
   
-▶️ **Check my solution [HERE](https://github.com/KannaKit/8_Week_SQL_Challenge/blob/main/Case%20Study%20%237%20-%20Balanced%20Tree%20Clothing%20Co/Reporting%20Challenge.md)**
+▶️ **Check my solution [HERE](https://github.com/KannaKit/8_week_SQL_challenge_with_python/blob/main/Case%20Study%20%237%20-%20Balanced%20Tree%20Clothing%20Co/D.%20Reporting%20Challenge.md)**
   
 ---
   
@@ -81,7 +81,7 @@ Use a single SQL query to transform the `product_hierarchy` and `product_prices`
 
 Hint: you may want to consider using a recursive CTE to solve this problem!
   
-▶️ **Check my solution [HERE](https://github.com/KannaKit/8_Week_SQL_Challenge/blob/main/Case%20Study%20%237%20-%20Balanced%20Tree%20Clothing%20Co/Bonus%20Challenge.md)**
+▶️ **Check my solution [HERE](https://github.com/KannaKit/8_week_SQL_challenge_with_python/blob/main/Case%20Study%20%237%20-%20Balanced%20Tree%20Clothing%20Co/E.%20Bonus%20Challenge.md)**
   
 ---
   
